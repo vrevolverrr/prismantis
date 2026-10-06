@@ -24,7 +24,7 @@ Prismantis is a Claude Code mod that redraws assistant replies with themeable co
 ## Rules
 
 - Bundled code and copied palettes must be MIT. Check the license at the source repo, not a port or fork: GitHub's `license.spdx_id` misses licenses declared only in a README (Gruvbox), and ports can relicense (Tokyo Night's Neovim port is Apache-2.0, the original VS Code theme is MIT).
-- Add a dependency only when writing it ourselves is unreasonable. Use its latest release, prefer well-starred maintained projects, and record it in docs/THIRD_PARTY_NOTICES.md. The runtime dependencies today are beautiful-mermaid and Prism, both bundled. esbuild is build-time only. The mod runs one external program, the optional RaTeX renderer, from `hooks/register.tsx` through `$.process.run`; nothing else.
+- Add a dependency only when writing it ourselves is unreasonable. Use its latest release, prefer well-starred maintained projects, and record it in docs/THIRD_PARTY_NOTICES.md. The runtime dependency today is beautiful-mermaid, bundled. esbuild is build-time only. The mod runs one external program, the optional RaTeX renderer, from `hooks/register.tsx` through `$.process.run`; nothing else.
 - Never copy code from other projects, including other mods. Read them to learn the API, then write our own.
 - No code comments. The why goes in the commit message or PR description.
 - Plugin names cannot start with `claude-`, `anthropic-` or `cc-plugin-`, and must not use other products' trademarks (no "Codex" in names).
@@ -65,7 +65,7 @@ npm --prefix scripts run bench:check     # timings vs docs/bench-baseline.json (
 
 CI runs `bench:check -- --no-time`: node counts gate, timings only print, because the calibration ratio differs between an M-series laptop and a Linux runner. Run the full check locally before a release.
 
-After an intended visual change run `snapshot:update` and review the diff; after an intended speed or size change run `npm --prefix scripts run bench -- --update`. Claude Code refuses any tree over 20000 nodes and silently draws its own text, so a node-count rise lowers that ceiling (about 500 highlighted code lines, 1000 table rows).
+After an intended visual change run `snapshot:update` and review the diff; after an intended speed or size change run `npm --prefix scripts run bench -- --update`. Claude Code refuses any tree over 20000 nodes and silently draws its own text, so a node-count rise lowers that ceiling (about 500 table rows).
 
 Test-kit gotchas:
 

@@ -14,7 +14,7 @@ const walk = (node, depth, out) => {
   if (typeof node !== 'object') return void out.push(`${'  '.repeat(depth)}"${node}"`)
   const { type, props: p, children = [] } = node
   const props = p ?? {}
-  const attrs = [props.color && `color=${props.color}`, props.backgroundColor && `bg=${props.backgroundColor}`, flags(props), props.flexDirection === 'row' && 'row', props.borderStyle && `border=${props.borderStyle}`].filter(Boolean).join(' ')
+  const attrs = [props.color && `color=${props.color}`, props.backgroundColor && `bg=${props.backgroundColor}`, flags(props), props.flexDirection === 'row' && 'row', props.borderStyle && `border=${props.borderStyle}`, type === 'Markdown' && JSON.stringify(props.text)].filter(Boolean).join(' ')
   out.push(`${'  '.repeat(depth)}<${type}${attrs ? ` ${attrs}` : ''}>`)
   walk(children, depth + 1, out)
 }

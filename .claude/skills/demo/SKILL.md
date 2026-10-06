@@ -16,7 +16,7 @@ The visual test. Unit tests prove the tree; this proves the look.
    - every flowchart box and sequence participant in its own color, with matching colors at both ends of the sequence
    - a value above each bar, the tallest bar highlighted and the rest muted, labels without quotes, dim gridlines, colored axis numbers
    - shell colors: command, flags, the quoted string, `&&`
-   - code blocks with a language header and no frame, and Prism colors in the TypeScript block
+   - code blocks drawn by Claude Code itself, exactly as without the mod
    - path, link and inline-code colors, the quote bar, and the green `Tip` alert box
    - with `copyButtons` on, an accent `[ ⧉ copy ]` button on the table, every diagram, the list, the shell block, the alert and the quote
    - the `$$` sum formula as a typeset image with a dim `◰` halfway down beside it in kitty or Ghostty with `ratex-render` installed, a `math` code block elsewhere

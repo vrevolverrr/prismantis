@@ -1,6 +1,6 @@
 {
   "name": "prismantis",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Colorful, themeable rendering for Claude Code replies: tables, headings, code, diagrams, LaTeX math, numbers, paths and links.",
   "author": {
     "name": "Nahum Litvin",
@@ -144,19 +144,19 @@
     "codeCommandColor": {
       "type": "string",
       "title": "Code command",
-      "description": "Color for the command word in shell blocks. Hex (#a6e3a1), rgb(166,227,161), ansi256(114) or a name (green). Empty uses the theme.",
+      "description": "Color for the command word in shell commands in tool rows. Hex (#a6e3a1), rgb(166,227,161), ansi256(114) or a name (green). Empty uses the theme.",
       "default": ""
     },
     "codeFlagColor": {
       "type": "string",
       "title": "Code flag",
-      "description": "Color for --flags in shell blocks. Hex (#a6e3a1), rgb(166,227,161), ansi256(114) or a name (green). Empty uses the theme.",
+      "description": "Color for --flags in shell commands in tool rows. Hex (#a6e3a1), rgb(166,227,161), ansi256(114) or a name (green). Empty uses the theme.",
       "default": ""
     },
     "codeStringColor": {
       "type": "string",
       "title": "Code string",
-      "description": "Color for quoted strings in shell blocks. Hex (#a6e3a1), rgb(166,227,161), ansi256(114) or a name (green). Empty uses the theme.",
+      "description": "Color for quoted strings in shell commands in tool rows. Hex (#a6e3a1), rgb(166,227,161), ansi256(114) or a name (green). Empty uses the theme.",
       "default": ""
     },
     "strongColor": {
@@ -204,13 +204,13 @@
     "codeTextColor": {
       "type": "string",
       "title": "Code text",
-      "description": "Color for code block text. Hex, rgb(), ansi256() or a name. Empty uses the theme.",
+      "description": "Color for shell command text in tool rows. Hex, rgb(), ansi256() or a name. Empty uses the theme.",
       "default": ""
     },
     "codeCommentColor": {
       "type": "string",
       "title": "Code comment",
-      "description": "Color for # comments in shell blocks. Hex, rgb(), ansi256() or a name. Empty uses the theme.",
+      "description": "Color for # comments in shell commands in tool rows. Hex, rgb(), ansi256() or a name. Empty uses the theme.",
       "default": ""
     },
     "ruleColor": {

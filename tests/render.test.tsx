@@ -64,13 +64,6 @@ test('options reach the drawing', { options: { tableHeaderColor: '#123456', high
   await ui.unmount()
 })
 
-test('shell blocks color command and flags', async $ => {
-  const ui = await $.ui.mount({ ...draw('```bash\ngh pr review 45 --approve\n```'), surface: 'terminal' })
-  expect((await ui.find({ type: 'Text', text: /^gh$/ }))?.props.color).toBe(PRESETS['catppuccin-mocha'].codeCommand)
-  expect((await ui.find({ type: 'Text', text: /^--approve$/ }))?.props.color).toBe(PRESETS['catppuccin-mocha'].codeFlag)
-  await ui.unmount()
-})
-
 test('disabled leaves the engine renderer alone', { options: { enabled: false } }, async ($, on) => {
   on('ui.render', ($, e) => {
     const { Text } = $.ui.resolve(e)
@@ -79,12 +72,6 @@ test('disabled leaves the engine renderer alone', { options: { enabled: false } 
   const ui = await $.ui.mount({ ...draw(TABLE), surface: 'terminal' })
   expect(await ui.find({ type: 'Text', text: /^Service$/ })).toBeUndefined()
   expect((await ui.find({ type: "Text", text: /^engine$/ }))?.text).toBe("engine")
-  await ui.unmount()
-})
-
-test('box art from a mermaid mod above is not shell-colored', async $ => {
-  const ui = await $.ui.mount({ ...draw('```\n┌───┐\n│ A │\n└───┘\n```'), surface: 'terminal' })
-  expect((await ui.find({ type: 'Text', text: /^│ A │$/ }))?.props.color).toBe(PRESETS['catppuccin-mocha'].codeText)
   await ui.unmount()
 })
 
@@ -105,7 +92,7 @@ test('mermaid draws as colored box art', async $ => {
 
 test('mermaid off keeps the source', { options: { mermaid: false } }, async $ => {
   const ui = await $.ui.mount({ ...draw(FLOW), surface: 'terminal' })
-  expect(await ui.find({ type: 'Text', text: /^graph LR$/ })).toBeDefined()
+  expect((await ui.find({ type: 'Markdown' }))?.props.text).toContain('graph LR')
   await ui.unmount()
 })
 
@@ -250,33 +237,6 @@ test('diagrams offer two copies: mermaid source and drawn art', { options: { cop
   await ui.unmount()
 })
 
-test('JSON and YAML get keys, strings, numbers and comments colored', async $ => {
-  const t = PRESETS['catppuccin-mocha']
-  const ui = await $.ui.mount({ ...draw('```yaml\nname: "shop" # app\nreplicas: 3\n```'), surface: 'terminal' })
-  expect((await ui.find({ type: 'Text', text: /^name$/ }))?.props.color).toBe(t.codeCommand)
-  expect((await ui.find({ type: 'Text', text: /^"shop"$/ }))?.props.color).toBe(t.codeString)
-  expect((await ui.find({ type: 'Text', text: /^3$/ }))?.props.color).toBe(t.number)
-  expect((await ui.find({ type: 'Text', text: /^# app$/ }))?.props.color).toBe(t.codeComment)
-  await ui.unmount()
-})
-
-test('Prism colors TypeScript keywords, strings and comments', async $ => {
-  const t = PRESETS['catppuccin-mocha']
-  const ui = await $.ui.mount({ ...draw('```ts\nconst name = "shop" // app\n```'), surface: 'terminal' })
-  expect((await ui.find({ type: 'Text', text: /^const$/ }))?.props.color).toBe(t.codeFlag)
-  expect((await ui.find({ type: 'Text', text: /^"shop"$/ }))?.props.color).toBe(t.codeString)
-  expect((await ui.find({ type: 'Text', text: /^\/\/ app$/ }))?.props.italic).toBe(true)
-  await ui.unmount()
-})
-
-test('fence languages that name Prism internals fall back to plain code', async $ => {
-  for (const lang of ['extend', 'toString', 'constructor', '__proto__']) {
-    const ui = await $.ui.mount({ ...draw(`\`\`\`${lang}\nhello\n\`\`\``), surface: 'terminal' })
-    expect((await ui.find({ type: 'Text', text: /^hello$/ }))?.props.color).toBe(PRESETS['catppuccin-mocha'].codeText)
-    await ui.unmount()
-  }
-})
-
 test('tables draw boxed by default, with a double line under the header', async $ => {
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await $.ui.mount({ ...draw(TABLE), surface })
@@ -300,4 +260,14 @@ test('github-dark-minimal resolves to its own palette', async () => {
 
   expect(theme.tableHeader).toBe('#ffffff')
   expect(theme.codeText).toBe('#7ee787')
+})
+
+test('code blocks are left to Claude Code: drawn by its own Markdown element, fences and all', async $ => {
+  const ui = await $.ui.mount({ ...draw('Run:\n\n```python\nprint("hi")\n```'), surface: 'terminal' })
+
+  const markdown = await ui.find({ type: 'Markdown' })
+
+  expect(markdown?.props.text).toBe('```python\nprint("hi")\n```')
+  expect(await ui.find({ type: 'Text', text: /^── / })).toBeUndefined()
+  await ui.unmount()
 })

@@ -38,7 +38,6 @@ const freshCharts = (text, i) => text.replace(/(```mermaid\n[\s\S]*?)\n```/g, `$
 
 const section = n => demo.repeat(n)
 const bigTable = `| id | service | region | pods | p95 |\n|---|---|---|---|---|\n${Array.from({ length: 300 }, (_, i) => `| ${i} | svc-${i} | us-east | ${i * 3} | ${i % 90}ms |`).join('\n')}`
-const bigCode = `\`\`\`ts\n${Array.from({ length: 1500 }, (_, i) => `const v${i} = await fetch("/api/${i}", { retries: ${i % 5} }) // 99.9% ~/src/app.ts`).join('\n')}\n\`\`\``
 const streamSource = section(6)
 
 const blocks = parse(demo, { numbers: true, paths: true })
@@ -55,7 +54,6 @@ for (let end = 100; end <= streamSource.length; end += 100) {
 
 const count = n => (n == null || n === false ? 0 : Array.isArray(n) ? n.reduce((a, c) => a + count(c), 0) : typeof n !== "object" ? 1 : 1 + count(n.children))
 const nodeRows = [
-  ["nodes: 500 highlighted ts lines", `\`\`\`ts\n${Array.from({ length: 500 }, (_, i) => `const v${i} = await fetch("/api/${i}", { retries: ${i % 5} })`).join("\n")}\n\`\`\``],
   ["nodes: 300 table rows", bigTable.split("\n").slice(0, 302).join("\n")],
   ["nodes: 300 paragraphs", Array.from({ length: 300 }, (_, i) => `Paragraph ${i} with **bold**, \`code\`, 99.9% and ~/src/app.ts.`).join("\n\n")],
   ["nodes: demo reply", demo],
@@ -69,7 +67,6 @@ const rows = [
   time('full reply, demo (warm)', () => reply(demo, style)),
   time('full reply, 6x demo (cold)', i => reply(freshCharts(section(6), i), style), Math.max(20, RUNS / 5)),
   time('table, 300 rows', i => reply(fresh(bigTable, i), style)),
-  time('code block, 1500 lines, highlighted', i => reply(fresh(bigCode, i), style), Math.max(20, RUNS / 5)),
   {
     stage: `stream replay, ${streamTimes.length} redraws of a ${streamSource.length}-char reply (per redraw)`,
     median: quantile(streamTimes, 0.5),

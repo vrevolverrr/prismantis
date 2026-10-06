@@ -2,9 +2,7 @@ import type { ElementTable, RenderElement } from 'claude-code'
 
 import type { Block, Inline } from './markdown'
 import { inlineText } from './markdown'
-import type { Style, Theme } from './theme'
-import type { PrismToken } from './vendor/prism.js'
-import { languages, tokenize } from './vendor/prism.js'
+import type { Style } from './theme'
 
 const WIDE = /[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFF60\uFFE0-\uFFE6]|\p{Extended_Pictographic}/u
 const segmenter = typeof Intl !== 'undefined' && 'Segmenter' in Intl ? new Intl.Segmenter() : undefined
@@ -44,26 +42,6 @@ const renderInline = (el: ElementTable, style: Style, nodes: Inline[], keyBase: 
   })
 }
 
-const PRISM_COLORS: Record<string, keyof Theme> = {
-  comment: 'codeComment', prolog: 'codeComment', doctype: 'codeComment', cdata: 'codeComment',
-  string: 'codeString', char: 'codeString', 'template-string': 'codeString', 'attr-value': 'codeString', url: 'codeString',
-  number: 'number', boolean: 'number', constant: 'number', symbol: 'number', inserted: 'number',
-  keyword: 'codeFlag', important: 'codeFlag', atrule: 'codeFlag', rule: 'codeFlag', deleted: 'codeFlag',
-  function: 'codeCommand', 'class-name': 'codeCommand', builtin: 'codeCommand', key: 'codeCommand', selector: 'codeCommand',
-  property: 'link', tag: 'link', 'attr-name': 'emphasis', variable: 'emphasis', regex: 'path',
-}
-
-type Segment = { text: string; color?: string; italic: boolean }
-
-const flatten = (tokens: PrismToken[], style: Style, color?: string, italic = false): Segment[] =>
-  tokens.flatMap(token => {
-    if (typeof token === 'string') return [{ text: token, color, italic }]
-    const names = [token.type, ...(Array.isArray(token.alias) ? token.alias : token.alias ? [token.alias] : [])]
-    const slot = names.map(n => PRISM_COLORS[n]).find(Boolean)
-    const inner = Array.isArray(token.content) ? token.content : [token.content]
-    return flatten(inner, style, slot ? style.theme[slot] : color, italic || token.type === 'comment')
-  })
-
 export const remember = <T,>(cache: Map<string, T>, key: string, make: () => T, limit = 200): T => {
   const hit = cache.get(key)
   if (hit !== undefined) return hit
@@ -71,37 +49,6 @@ export const remember = <T,>(cache: Map<string, T>, key: string, make: () => T, 
   cache.set(key, value)
   if (cache.size > limit) cache.delete(cache.keys().next().value!)
   return value
-}
-
-const highlighted = new WeakMap<Style, Map<string, Segment[][]>>()
-
-const grammarFor = (lang: string) => {
-  const name = lang.toLowerCase()
-  const grammar = Object.hasOwn(languages, name) ? languages[name] : undefined
-  return grammar !== null && typeof grammar === 'object' ? grammar : undefined
-}
-
-export const highlightBlock = ({ Text }: ElementTable, style: Style, lines: string[], lang: string, key: string): RenderElement[] | null => {
-  const grammar = grammarFor(lang)
-  if (!grammar) return null
-  const code = lines.join('\n')
-  const cache = highlighted.get(style) ?? new Map<string, Segment[][]>()
-  highlighted.set(style, cache)
-  const rows = remember(cache, `${lang}\0${code}`, () => {
-    const out: Segment[][] = [[]]
-    for (const seg of flatten(tokenize(code, grammar), style)) {
-      seg.text.split('\n').forEach((piece, i) => {
-        if (i > 0) out.push([])
-        if (piece) out[out.length - 1]!.push({ ...seg, text: piece })
-      })
-    }
-    return out
-  })
-  return rows.map((row, r) => (
-    <Text key={`${key}.${r}`} color={style.theme.codeText}>
-      {row.length ? row.map((s, i) => <Text key={`${key}.${r}.${i}`} color={s.color} italic={s.italic}>{s.text}</Text>) : ' '}
-    </Text>
-  ))
 }
 
 const isShellLang = (lang: string) => lang === '' || /^(sh|bash|zsh|shell|console|fish|powershell|ps1)$/i.test(lang)
@@ -364,17 +311,7 @@ export const renderBlocks = (el: ElementTable, style: Style, blocks: Block[], co
       case 'rule':
         return <Text key={key} color={t.rule} dimColor={!t.rule}>{'─'.repeat(Math.max(8, Math.min(columns, 80)))}</Text>
       case 'code':
-        return drawn.get(b)?.element ?? (
-          <Box key={key} flexDirection="column" alignSelf="flex-start">
-            <Box flexDirection="row" justifyContent="space-between" columnGap={4}>
-              <Text color={t.codeComment}>{`── ${block.lang || 'code'}`}</Text>
-              {copy?.(block.lines.join('\n'), `copy${b}`) ?? null}
-            </Box>
-            <Box flexDirection="column" paddingLeft={2}>
-              {(isShellLang(block.lang) ? null : highlightBlock(el, style, block.lines, block.lang, key)) ?? block.lines.map((line, i) => codeLine(el, style, line, block.lang, `${key}.${i}`))}
-            </Box>
-          </Box>
-        )
+        return drawn.get(b)?.element ?? <el.Markdown key={key} text={block.raw} />
       case 'list':
         return renderList(el, style, block, key)
       case 'table':
@@ -385,9 +322,8 @@ export const renderBlocks = (el: ElementTable, style: Style, blocks: Block[], co
     if (drawn.get(b)?.copies) return element
     const block = blocks[b]
     const text = block ? copySource(block) : undefined
-    const isPlainCode = block?.kind === 'code' && !drawn.has(b)
     const art = drawn.get(b)?.art ?? (block?.kind === 'table' ? () => tableArt(block) : undefined)
-    const first = text === undefined || isPlainCode ? null : copy?.(text, `copy${b}`, art === undefined || block?.kind === 'table' ? undefined : '⧉ source')
+    const first = text === undefined ? null : copy?.(text, `copy${b}`, art === undefined || block?.kind === 'table' ? undefined : '⧉ source')
     const second = first && art !== undefined ? copy?.(art, `art${b}`, '⧉ art') : null
     const button = second ? (
       <el.Box key={`copies${b}`} flexDirection="row" columnGap={1}>

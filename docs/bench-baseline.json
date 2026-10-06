@@ -6,10 +6,8 @@
   "full reply, demo (warm)": 0.056,
   "full reply, 6x demo (cold)": 0.39894,
   "table, 300 rows": 0.3435,
-  "code block, 1500 lines, highlighted": 0.14938,
   "stream replay, 83 redraws of a 8328-char reply (per redraw)": 0.0578,
-  "nodes: 500 highlighted ts lines": 19505,
   "nodes: 300 table rows": 9617,
   "nodes: 300 paragraphs": 6600,
-  "nodes: demo reply": 847
+  "nodes: demo reply": 708
 }

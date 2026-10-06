@@ -27,31 +27,6 @@ const DRAW = /beautiful-mermaid\/src\/ascii\/draw\.ts$/
 const DRAW_ANCHOR = '  graph.canvas = mergeCanvases(graph.canvas, zero, useAscii, ...labelCanvases)'
 const DRAW_IMPORT = 'import { mkCanvas, copyCanvas,'
 
-const PRISM_LANGUAGES = ['clike', 'markup', 'css', 'javascript', 'typescript', 'jsx', 'tsx', 'python', 'go', 'rust', 'java', 'kotlin', 'swift', 'c', 'cpp', 'csharp', 'ruby', 'json', 'yaml', 'toml', 'sql', 'diff', 'docker', 'hcl']
-
-track(await build({
-  metafile: true,
-  stdin: {
-    contents: [
-      "const Prism = require('./node_modules/prismjs/components/prism-core.js')",
-      'globalThis.Prism = Prism',
-      ...PRISM_LANGUAGES.map(l => `require('./node_modules/prismjs/components/prism-${l}.js')`),
-      'export const languages = Prism.languages',
-      'export const tokenize = (code, grammar) => Prism.tokenize(code, grammar)',
-    ].join('\n'),
-    resolveDir: '.',
-    loader: 'js',
-  },
-  bundle: true,
-  format: 'esm',
-  platform: 'neutral',
-  target: 'es2023',
-  minifySyntax: true,
-  minifyWhitespace: true,
-  outfile: '../hooks/vendor/prism.js',
-  legalComments: 'none',
-}))
-
 track(await build({
   metafile: true,
   stdin: {

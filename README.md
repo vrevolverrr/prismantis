@@ -20,7 +20,7 @@ This is a fork of [NahumLitvin/prismantis](https://github.com/NahumLitvin/prisma
 | --- | --- |
 | [Themes](#themes) | `/prismantis theme <name>` switches on the spot. 16 MIT palettes (Catppuccin, Dracula, Nord, Tokyo Night, Gruvbox, Rosé Pine, Everforest, GitHub, One Dark, Solarized) plus 21 color slots you can override |
 | [Tables](#tables) | colored headers, rules, column alignment, colored numbers, sized to the terminal |
-| [Code](#code) | a language header, Prism highlighting in 24 languages, shell lines colored like a prompt |
+| [Code](#code) | left to Claude Code's own renderer, exactly as without the mod |
 | [Diagrams and charts](#diagrams-and-charts) | flowcharts, sequence, state, class and ER diagrams, bar and line charts, one color per box, participant and bar |
 | [LaTeX math](#latex-math) | `$$` and ` ```math ` formulas typeset as images in kitty and Ghostty by [RaTeX](https://github.com/erweixin/RaTeX), text everywhere else |
 | [Layout](#layout) | back-to-back tables and diagrams sit side by side and wrap on narrow terminals |
@@ -52,7 +52,7 @@ For LaTeX math, also put RaTeX's renderer on your `PATH`; see [LaTeX math](#late
 
 Tested in the terminal on macOS; CI runs the tests on macOS, Linux and Windows. The desktop app, VS Code and mobile should work through the same mod API but have not been checked by hand yet. Turn it off any time in `/plugin`, and Claude Code's own renderer comes back. Press ctrl+o on a reply to see the original.
 
-It's a [Claude Code mod](https://claude.com/blog/claude-code-mods) in plain TypeScript. It bundles two MIT libraries, [beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid) for diagrams and [Prism](https://github.com/PrismJS/prism) for highlighting. It makes no network calls. It redraws text already on your screen and, while `mermaid` is on, hands the model a short note when a session starts. The one program it runs is the optional RaTeX renderer, for [LaTeX math](#latex-math), and only where it is installed and the terminal can show images; `latex: off` stops that too.
+It's a [Claude Code mod](https://claude.com/blog/claude-code-mods) in plain TypeScript. It bundles one MIT library, [beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid), for diagrams. It makes no network calls. It redraws text already on your screen and, while `mermaid` is on, hands the model a short note when a session starts. The one program it runs is the optional RaTeX renderer, for [LaTeX math](#latex-math), and only where it is installed and the terminal can show images; `latex: off` stops that too.
 
 ### Themes
 
@@ -70,10 +70,7 @@ Header cells take the `tableHeader` color, and every cell sits in a box with a d
 
 ### Code
 
-Code blocks get a header row with the language on the left (and a copy button on the right when `copyButtons` is on), and the code sits indented below with no frame, so selecting it with the mouse copies only the code.
-
-- **Prism** highlights JavaScript, TypeScript, JSX/TSX, Python, Go, Rust, Java, Kotlin, Swift, C, C++, C#, Ruby, JSON, YAML, TOML, SQL, HTML, CSS, Dockerfile, HCL and diff: keywords, strings, numbers, comments, keys, functions and properties each get a theme color.
-- **Shell** blocks (`bash`, `sh`, `zsh`, unlabeled) color the command word, `--flags`, quoted strings and `# comments`, and restart after `|`, `&&` and `;`.
+Code blocks are left to Claude Code: prismantis hands each one to Claude Code's own markdown renderer, so they look and highlight exactly as they do without the mod. Tool rows still color their shell commands (`codeCommand`, `codeFlag`, `codeString`, `codeComment`).
 
 ### Diagrams and charts
 
@@ -182,15 +179,15 @@ A color is hex (`#a6e3a1`, `#fc0`), `rgb(166,227,161)`, `ansi256(114)` or a name
 | `accent` | reply bullet, H3+ headings, quote bar, running tool dots |
 | `heading` | H1 and H2 |
 | `strong` | **bold** text |
-| `emphasis` | *italic* text, variables, attribute names |
+| `emphasis` | *italic* text |
 | `inlineCode` | `inline code` |
-| `codeText` | code block text |
-| `codeCommand` | shell commands, functions, class names, keys |
-| `codeFlag` | `--flags`, keywords, failures |
-| `codeString` | strings |
-| `codeComment` | comments, the code block's language label |
-| `link` | links, URLs, properties, tags |
-| `path` | file paths, regexes |
+| `codeText` | shell command text in tool rows |
+| `codeCommand` | the command word in tool rows |
+| `codeFlag` | `--flags` in tool rows, failures |
+| `codeString` | quoted strings in tool rows |
+| `codeComment` | `# comments` in tool rows, the turn footer |
+| `link` | links and URLs |
+| `path` | file paths |
 | `number` | numbers, versions, durations, done dots |
 | `quote` | quote text |
 | `rule` | rules, chart gridlines |
@@ -205,7 +202,6 @@ A color is hex (`#a6e3a1`, `#fc0`), `rgb(166,227,161)`, `ansi256(114)` or a name
 
 - The parser covers what Claude writes (headings, lists, tables, fences, quotes, emphasis, links). It's not full CommonMark: nested quotes and HTML draw as plain text.
 - Widths count CJK and emoji as two columns. Terminals disagree on a few emoji, so those can still be off by one.
-- Languages outside the 24 above draw in `codeText`.
 
 ## Roadmap
 

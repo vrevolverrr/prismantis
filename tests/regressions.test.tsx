@@ -2,7 +2,7 @@ import type { On } from 'claude-code'
 import { expect, test } from 'claude-code/testing'
 
 import { helpText, showcaseText } from '../hooks/help'
-import { parse } from '../hooks/markdown'
+import { inlineText, parse } from '../hooks/markdown'
 import { mermaidText } from '../hooks/mermaid'
 import { tableArt } from '../hooks/render'
 import { PRESETS } from '../hooks/presets'
@@ -79,18 +79,6 @@ test('a link column is sized for the URL it shows', async $ => {
   const ui = await $.ui.mount(mount(`| link | n |\n|---|---|\n| [go](${url}) | 1 |`))
   const cells = (await ui.findAll({ type: 'Box' })).filter(b => typeof b.props.width === 'number' && b.props.flexShrink === 0).slice(1)
   expect((cells[0]?.props.width as number) >= `go (${url})`.length).toBe(true)
-  await ui.unmount()
-})
-
-test('highlight colors follow the theme in use: red', { options: { codeFlagColor: '#ff0000' } }, async $ => {
-  const ui = await $.ui.mount(mount('```ts\nconst same = 1\n```'))
-  expect((await ui.find({ type: 'Text', text: /^const$/ }))?.props.color).toBe('#ff0000')
-  await ui.unmount()
-})
-
-test('highlight colors follow the theme in use: green', { options: { codeFlagColor: '#00ff00' } }, async $ => {
-  const ui = await $.ui.mount(mount('```ts\nconst same = 1\n```'))
-  expect((await ui.find({ type: 'Text', text: /^const$/ }))?.props.color).toBe('#00ff00')
   await ui.unmount()
 })
 
@@ -215,7 +203,7 @@ test('a 300-row table draws inside its budget', async $ => {
   await ui.unmount()
 })
 
-test('a 400-line highlighted code block stays under the engine node limit and its time budget', async $ => {
+test('a 400-line code block stays under the engine node limit and its time budget', async $ => {
   const code = `\`\`\`ts\n${Array.from({ length: 400 }, (_, i) => `const v${i} = await fetch("/api/${i}", { retries: ${i % 5} })`).join('\n')}\n\`\`\``
   const started = performance.now()
   const ui = await $.ui.mount(mount(code, 160))
@@ -324,4 +312,14 @@ test('a one-paragraph English block gets no copy reply button', { options: { cop
   const ui = await $.ui.mount(mount('Checking the tests next.'))
   expect((await ui.findAll({ type: 'Button' })).some(b => b.props.label === '⧉ copy reply')).toBe(false)
   await ui.unmount()
+})
+
+test('double underscores inside a word stay literal, as in mcp__serena__activate_project', async () => {
+  const [block] = parse('Call mcp__serena__activate_project, not __this__.', hl)
+  if (block?.kind !== 'paragraph') throw new Error('not a paragraph')
+
+  const strong = block.inline.filter(n => n.kind === 'strong')
+
+  expect(inlineText(block.inline)).toBe('Call mcp__serena__activate_project, not this.')
+  expect(strong.map(n => inlineText([n]))).toEqual(['this'])
 })

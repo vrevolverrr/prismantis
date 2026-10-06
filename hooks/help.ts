@@ -40,7 +40,7 @@ Colored markdown for Claude Code replies: **bold**, *italic*, ~~struck~~, \`inli
 > Selecting a typeset formula copies blank cells. Its ◰ copies the LaTeX.
 
 > [!CAUTION]
-> Claude Code refuses trees over 20000 nodes. A code block past about 500 highlighted lines falls back to plain text.
+> Claude Code refuses trees over 20000 nodes. A table past about 500 rows falls back to plain text.
 
 ### Task lists
 
@@ -135,5 +135,5 @@ xychart-beta
 \`\`\`
 
 > [!CAUTION]
-> Claude Code refuses trees over 20000 nodes. A code block past about 500 highlighted lines falls back to plain text.
+> Claude Code refuses trees over 20000 nodes. A table past about 500 rows falls back to plain text.
 `

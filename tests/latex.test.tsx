@@ -91,7 +91,7 @@ test('a formula the renderer rejects falls back to its text', async ($, on) => {
   await clock.settle()
 
   expect(await ui.find({ type: 'Image' })).toBeUndefined()
-  expect(await ui.find({ type: 'Text', text: /^\\badcommand\{x\}$/ })).toBeDefined()
+  expect((await ui.find({ type: 'Markdown' }))?.props.text).toBe('$$\n\\badcommand{x}\n$$')
   await ui.unmount()
 })
 
@@ -107,7 +107,7 @@ test('without the renderer installed, math stays text and no LaTeX hint is sent'
   const started = await $.classic.SessionStart({ source: 'startup' })
 
   expect(await ui.find({ type: 'Image' })).toBeUndefined()
-  expect(await ui.find({ type: 'Text', text: /^\\int_0\^1 x\^2\\,dx$/ })).toBeDefined()
+  expect((await ui.find({ type: 'Markdown' }))?.props.text).toBe('$$\n\\int_0^1 x^2\\,dx\n$$')
   expect((started.additionalContext ?? []).some(c => c.includes('$$'))).toBe(false)
   await ui.unmount()
 })
@@ -250,7 +250,7 @@ test('a formula that cannot fit the terminal falls back to its text', { options:
   await clock.settle()
 
   expect(await ui.find({ type: 'Image' })).toBeUndefined()
-  expect(await ui.find({ type: 'Text', text: /^\\int_0\^1 x\^2\\,dx$/ })).toBeDefined()
+  expect((await ui.find({ type: 'Markdown' }))?.props.text).toBe('$$\n\\int_0^1 x^2\\,dx\n$$')
   await ui.unmount()
 })
 

@@ -17,7 +17,7 @@ Bug reports, themes and fixes are welcome.
 
 ## Rules
 
-- No new runtime dependencies. The bundled libraries are beautiful-mermaid and Prism (both MIT); anything else bundled must be MIT and listed in docs/THIRD_PARTY_NOTICES.md.
+- No new runtime dependencies. The bundled library is beautiful-mermaid (MIT); anything else bundled must be MIT and listed in docs/THIRD_PARTY_NOTICES.md.
 - No code comments. Put the why in the PR description.
 - `$` can't cross an import: code that calls `$` lives in `hooks/register.tsx`, everything else stays pure.
 - Every new option goes in `plugin.json` `userConfig` and the README table.

@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.9.3] - 2026-10-06
+
+### Changed
+
+- Code blocks are left to Claude Code: each one is drawn by Claude Code's own markdown renderer, so code looks and highlights exactly as it does without the mod. The `── <language>` header is gone.
+
+### Removed
+
+- The bundled Prism highlighter and its 24 language grammars, which only colored code blocks. Tool rows still color their shell commands.
+
+### Fixed
+
+- Double underscores inside a word stay literal, as in `mcp__serena__activate_project`; only `__bold__` that starts and ends a word turns bold, as CommonMark has it.
+
 ## [0.9.2] - 2026-10-06
 
 ### Fixed
