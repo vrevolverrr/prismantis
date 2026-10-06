@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.9.2] - 2026-10-06
+
+### Fixed
+
+- The formula copy icon is now `◰`, which common coding fonts include, so it draws at text size and lines up with its `✓` instead of coming from a fallback font. It sits halfway down the formula.
+
 ## [0.9.1] - 2026-10-06
 
 ### Fixed

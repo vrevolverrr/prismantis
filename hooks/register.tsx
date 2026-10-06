@@ -136,15 +136,17 @@ const drawMarkdown = ($: EngineInterface, el: ReturnType<EngineInterface['ui']['
     if (!Image || !fit || block?.kind !== 'code') continue
     drawn.set(i, {
       element: (
-        <Box key={`b${i}`} flexDirection="row" alignItems="center" columnGap={1}>
+        <Box key={`b${i}`} flexDirection="row" columnGap={1}>
           <Image key={`m${i}`} source={{ png: typeset.png }} columns={fit.columns} rows={fit.rows} alt={typeset.tex} />
-          {copied === `${scope}/${i}` ? (
-            <Text key={`copy${i}`} color={style.theme.number}>✓</Text>
-          ) : (
-            <Button key={`copy${i}`} plain dimColor label="⧉" onPress={press => void copyText(block.lines.join('\n'), press.surface).then(isCopied => {
-              if (isCopied) void tick($, `${scope}/${i}`)
-            })} />
-          )}
+          <Box key={`slot${i}`} width={1} marginTop={Math.floor((fit.rows - 1) / 2)}>
+            {copied === `${scope}/${i}` ? (
+              <Text key={`copy${i}`} color={style.theme.number}>✓</Text>
+            ) : (
+              <Button key={`copy${i}`} plain dimColor label="◰" onPress={press => void copyText(block.lines.join('\n'), press.surface).then(isCopied => {
+                if (isCopied) void tick($, `${scope}/${i}`)
+              })} />
+            )}
+          </Box>
         </Box>
       ),
       copies: true,

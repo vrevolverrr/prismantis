@@ -19,6 +19,6 @@ The visual test. Unit tests prove the tree; this proves the look.
    - code blocks with a language header and no frame, and Prism colors in the TypeScript block
    - path, link and inline-code colors, the quote bar, and the green `Tip` alert box
    - with `copyButtons` on, an accent `[ ⧉ copy ]` button on the table, every diagram, the list, the shell block, the alert and the quote
-   - the `$$` sum formula as a typeset image with a dim `⧉` beside it in kitty or Ghostty with `ratex-render` installed, a `math` code block elsewhere
+   - the `$$` sum formula as a typeset image with a dim `◰` halfway down beside it in kitty or Ghostty with `ratex-render` installed, a `math` code block elsewhere
 4. **Fix what looks wrong**, then run the demo again.
 5. **Keep it current.** A new feature adds a line to `docs/demo.md` and to the checklist above. All data stays invented and neutral.

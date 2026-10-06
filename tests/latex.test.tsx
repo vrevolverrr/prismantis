@@ -254,7 +254,7 @@ test('a formula that cannot fit the terminal falls back to its text', { options:
   await ui.unmount()
 })
 
-const icons = <B extends { props: Record<string, unknown> }>(buttons: B[]) => buttons.filter(b => b.props.label === '⧉')
+const icons = <B extends { props: Record<string, unknown> }>(buttons: B[]) => buttons.filter(b => b.props.label === '◰')
 
 const stubClipboard = (on: On) => {
   const copied: string[] = []
@@ -273,7 +273,7 @@ test('a typeset formula has a copy icon that copies its LaTeX', async ($, on) =>
 
   const ui = await $.ui.mount(reply(REPLY))
   await clock.settle()
-  const icon = (await ui.findAll({ type: 'Button' })).find(b => b.props.label === '⧉')
+  const icon = (await ui.findAll({ type: 'Button' })).find(b => b.props.label === '◰')
   await ui.press({ key: String(icon?.key) })
 
   expect(copied).toEqual(['\\int_0^1 x^2\\,dx'])
@@ -289,7 +289,7 @@ test('with copy buttons on, a typeset formula still has one copy control', { opt
   await clock.settle()
 
   const labels = (await ui.findAll({ type: 'Button' })).map(b => b.props.label)
-  expect(labels).toEqual(['⧉'])
+  expect(labels).toEqual(['◰'])
   await ui.unmount()
 })
 
@@ -310,5 +310,26 @@ test('pressing the copy icon shows a tick for a moment, then the icon again', as
   await clock.advance(1500)
   expect(await ui.find({ type: 'Text', text: /^✓$/ })).toBeUndefined()
   expect(icons(await ui.findAll({ type: 'Button' }))).toHaveLength(1)
+  await ui.unmount()
+})
+
+test('the copy icon sits halfway down the formula, and the tick takes the same place', { options: { latexScale: 8 } }, async ($, on) => {
+  mock.env(on, KITTY)
+  const clock = mock.clock(on)
+  ratex(on)
+  stubClipboard(on)
+
+  const ui = await $.ui.mount(reply(REPLY))
+  await clock.settle()
+  const { rows } = sizeOf(await ui.find({ type: 'Image' }))
+  const before = (await ui.find({ key: 'slot1' }))?.props.marginTop
+  const [icon] = icons(await ui.findAll({ type: 'Button' }))
+  await ui.press({ key: String(icon?.key) })
+  await clock.settle()
+
+  expect(rows).toBe(3)
+  expect(before).toBe(1)
+  expect((await ui.find({ key: 'slot1' }))?.props.marginTop).toBe(1)
+  expect(await ui.find({ type: 'Text', text: /^✓$/ })).toBeDefined()
   await ui.unmount()
 })

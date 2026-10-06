@@ -37,7 +37,7 @@ Colored markdown for Claude Code replies: **bold**, *italic*, ~~struck~~, \`inli
 > After updating the plugin, open sessions need \`/reload\`.
 
 > [!WARNING]
-> Selecting a typeset formula copies blank cells. Its ⧉ copies the LaTeX.
+> Selecting a typeset formula copies blank cells. Its ◰ copies the LaTeX.
 
 > [!CAUTION]
 > Claude Code refuses trees over 20000 nodes. A code block past about 500 highlighted lines falls back to plain text.
