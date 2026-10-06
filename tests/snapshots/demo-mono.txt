@@ -462,6 +462,13 @@
         " "
       <Text>
         ""skadoosh""
+<Box>
+  <Box row>
+    <Text>
+      "── math"
+  <Box>
+    <Text>
+      "\sum_{k=1}^{n} k = \frac{n(n+1)}{2}"
 <Box border=round>
   <Text color=green bold>
     "Tip"
@@ -486,159 +493,3 @@
   <Text italic>
     <Text>
       "Mantis wisdom: small bug, big kick."
-<Box>
-  <Box>
-    <Text bold>
-      <Text>
-        "תירבע"
-    <Text>
-      "━━━━━"
-<Box>
-  <Text>
-    <Text underline>
-      "רושיק"
-    <Text>
-      " םגו ,250ms-ו "
-    <Text>
-      "99.9%"
-    <Text>
-      " ומכ םירפסמ ,"
-    <Text>
-      "kubectl"
-    <Text>
-      " ומכ תילגנאב םיחנומ םע תירבע םג רייצמ ףסותה ,"
-    <Text bold>
-      <Text>
-        "םירבח םולש"
-  <Text>
-    <Text>
-      "."
-    <Text>
-      "(https://github.com/NahumLitvin/prismantis)"
-<Box>
-  <Box row>
-    <Box>
-      <Text>
-        <Text>
-          "(םירוזא ינש) eu-west-ו us-east-ב םיסורפ"
-    <Text>
-      " •"
-  <Box row>
-    <Box>
-      <Text>
-        <Text>
-          "/prismantis theme nord"
-        <Text>
-          " םע אשונ תכרע םיפילחמ"
-    <Text>
-      " •"
-<Box>
-  <Box row>
-    <Box>
-      <Text>
-        <Text>
-          "םיילגרה "
-        <Text>
-          "6"
-        <Text>
-          " לכ תא םיחתומו םיררועתמ"
-    <Text>
-      " 1."
-  <Box row>
-    <Box>
-      <Text>
-        <Text>
-          "סלדונה ילאל םיללפתמ"
-    <Text>
-      " 2."
-<Box row>
-  <Box>
-    <Text italic>
-      <Text>
-        "תוינוויכב הכימת ילב לנימרטב םג ,לאמשל ןימימ תארקנ תירבע"
-  <Text>
-    " │"
-<Box>
-  <Text>
-    "┌────────────────┬──────────────┬───────┐"
-  <Box row>
-    <Text>
-      "│ "
-    <Box>
-      <Text bold>
-        "לע חוכ"
-    <Text>
-      " │ "
-    <Box>
-      <Text bold>
-        "טרס"
-    <Text>
-      " │ "
-    <Box>
-      <Text bold>
-        "םחול"
-    <Text>
-      " │"
-  <Text>
-    "╞════════════════╪══════════════╪═══════╡"
-  <Box row>
-    <Text>
-      "│ "
-    <Box>
-      <Text>
-        <Text>
-          "רוקיד תוטיעב"
-    <Text>
-      " │ "
-    <Box>
-      <Text>
-        <Text>
-          "הדנפ ופ גנוק"
-    <Text>
-      " │ "
-    <Box>
-      <Text>
-        <Text>
-          "סיטנמ"
-    <Text>
-      " │"
-  <Text>
-    "├────────────────┼──────────────┼───────┤"
-  <Box row>
-    <Text>
-      "│ "
-    <Box>
-      <Text>
-        <Text>
-          "23 m/s-ב ףורגא"
-    <Text>
-      " │ "
-    <Box>
-      <Text>
-        <Text>
-          "תואיצמ"
-    <Text>
-      " │ "
-    <Box>
-      <Text>
-        <Text>
-          "פמירש"
-    <Text>
-      " │"
-  <Text>
-    "└────────────────┴──────────────┴───────┘"
-<Box>
-  <Box row>
-    <Text>
-      "── bash"
-  <Box>
-    <Text>
-      <Text>
-        <Text>
-          "ls"
-        <Text>
-          " "
-        <Text>
-          "-la"
-      <Text>
-        " # םיצבקה תמישר"

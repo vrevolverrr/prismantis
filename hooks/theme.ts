@@ -1,12 +1,10 @@
 import type { PluginOptions } from 'claude-code'
 
 import { PRESETS } from './presets'
-import type { Shape, Terminal } from './rtl'
-import { TERMINALS } from './rtl'
 
 export const TOKENS = [
   'accent', 'heading', 'strong', 'emphasis', 'inlineCode', 'codeText', 'codeCommand', 'codeFlag', 'codeString', 'codeComment',
-  'link', 'path', 'number', 'quote', 'rule', 'tableHeader', 'tableRule', 'bullet', 'diagram', 'diagramText',
+  'link', 'path', 'number', 'quote', 'rule', 'tableHeader', 'tableRule', 'bullet', 'diagram', 'diagramText', 'math',
 ] as const
 
 export type Theme = Partial<Record<(typeof TOKENS)[number], string>>
@@ -21,10 +19,10 @@ export type Style = {
   mermaid: boolean
   mermaidAscii: boolean
   copyButtons: boolean
-  diagramHints: boolean
-  rtl: 'auto' | Terminal | 'off'
-  reorder: boolean
-  shape: Shape
+  latex: 'auto' | 'always' | 'off'
+  latexCommand: string
+  latexScale: number
+  latexCellRatio: number
 }
 
 const COLOR = /^(#[0-9a-f]{3}|#[0-9a-f]{6}|rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)|ansi256\(\d{1,3}\)|(black|red|green|yellow|blue|magenta|cyan|white|gray|grey)(Bright)?)$/i
@@ -34,13 +32,16 @@ export const isColor = (value: unknown): value is string => typeof value === 'st
 const pick = <T extends string>(value: unknown, allowed: readonly T[], fallback: T): T =>
   allowed.includes(value as T) ? (value as T) : fallback
 
+const within = (value: unknown, fallback: number, min: number, max: number): number => {
+  const n = typeof value === 'string' && value.trim() !== '' ? Number(value) : value
+  return typeof n === 'number' && Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback
+}
+
 export const resolveStyle = (options: PluginOptions): Style => {
   const base: Theme = (PRESETS as Record<string, Theme>)[String(options.theme)] ?? PRESETS['catppuccin-mocha']
   const fromFields = Object.fromEntries(
     TOKENS.filter(k => isColor(options[`${k}Color`])).map(k => [k, String(options[`${k}Color`]).trim()]),
   )
-
-  const rtl = pick(options.rtl, ['auto', 'off', ...(Object.keys(TERMINALS) as Terminal[])], 'auto')
 
   return {
     theme: { ...base, ...fromFields },
@@ -51,10 +52,10 @@ export const resolveStyle = (options: PluginOptions): Style => {
     highlightPaths: options.highlightPaths !== false,
     mermaid: options.mermaid !== false,
     mermaidAscii: options.mermaidAscii === true,
-    copyButtons: options.copyButtons !== false,
-    diagramHints: options.diagramHints !== false && options.mermaid !== false,
-    rtl,
-    reorder: rtl !== 'auto' && rtl !== 'off',
-    shape: rtl === 'auto' || rtl === 'off' ? 'visual' : TERMINALS[rtl],
+    copyButtons: options.copyButtons === true,
+    latex: pick(options.latex, ['auto', 'always', 'off'] as const, 'auto'),
+    latexCommand: typeof options.latexCommand === 'string' && options.latexCommand.trim() !== '' ? options.latexCommand.trim() : 'ratex-render',
+    latexScale: within(options.latexScale, 1, 0.25, 10),
+    latexCellRatio: within(options.latexCellRatio, 0.5, 0.1, 2),
   }
 }

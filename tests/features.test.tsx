@@ -1,5 +1,5 @@
 import type { On } from 'claude-code'
-import { expect, mock, test } from 'claude-code/testing'
+import { expect, test } from 'claude-code/testing'
 import type { TestBody } from 'claude-code/testing'
 
 import { parse } from '../hooks/markdown'
@@ -132,27 +132,40 @@ test('slash command output renders as markdown, errors stay native', async ($, o
   await bad.unmount()
 })
 
-test('your prompts carry the render hint as model-only context', async ($, on) => {
-  const seen: (readonly string[] | undefined)[] = []
-  mock.env(on, {})
-  on('prompt.submit', (_, e) => {
-    seen.push(e.context)
-    return { text: e.text, context: e.context }
-  })
-  await $.prompt.submit({ text: 'show me deploys per day', wait: false, origin: { kind: 'composer' } })
-  expect(seen[0]?.some(c => c.includes('prismantis'))).toBe(true)
-  expect(seen[0]?.some(c => c.includes('fenced block') && c.includes('copy button'))).toBe(true)
+test('the render hint reaches the model at session start', async ($, on) => {
+  on('classic.SessionStart', () => ({}))
+
+  const started = await $.classic.SessionStart({ source: 'startup' })
+
+  expect(started.additionalContext?.some(c => c.includes('mermaid'))).toBe(true)
+  expect((started.additionalContext ?? []).some(c => c.includes('copy button'))).toBe(false)
 })
 
-test('no render hint when diagramHints is off', { options: { diagramHints: false } }, async ($, on) => {
+test('with copy buttons on, the hint asks for commands in fenced blocks', { options: { copyButtons: true } }, async ($, on) => {
+  on('classic.SessionStart', () => ({}))
+
+  const started = await $.classic.SessionStart({ source: 'startup' })
+
+  expect(started.additionalContext?.some(c => c.includes('fenced block') && c.includes('copy button'))).toBe(true)
+})
+
+test('prompts carry no render hint', async ($, on) => {
   const seen: (readonly string[] | undefined)[] = []
-  mock.env(on, {})
   on('prompt.submit', (_, e) => {
     seen.push(e.context)
     return { text: e.text, context: e.context }
   })
-  await $.prompt.submit({ text: 'hi', wait: false, origin: { kind: 'composer' } })
-  expect((seen[0] ?? []).some(c => c.includes('prismantis'))).toBe(false)
+
+  await $.prompt.submit({ text: 'show me deploys per day', wait: false, origin: { kind: 'composer' } })
+
+  expect(seen.length).toBe(1)
+  expect((seen[0] ?? []).some(c => c.includes('mermaid'))).toBe(false)
+})
+
+test('no render hint when mermaid is off', { options: { mermaid: false } }, async ($, on) => {
+  on('classic.SessionStart', () => ({}))
+  const started = await $.classic.SessionStart({ source: 'startup' })
+  expect((started.additionalContext ?? []).some(c => c.includes('mermaid'))).toBe(false)
 })
 
 test('a continuation line joins the list item it is indented under', async () => {
@@ -219,7 +232,7 @@ const FULL = [
   '> a quote',
 ].join('\n')
 
-test('a full reply draws every element itself, with the right copy buttons', async ($, on) => {
+test('a full reply draws every element itself, with the right copy buttons', { options: { copyButtons: true } }, async ($, on) => {
   engine(on)
   const ui = await $.ui.mount({
     plugin: 'prismantis',
@@ -236,17 +249,6 @@ test('a full reply draws every element itself, with the right copy buttons', asy
   expect(labels.filter(l => l === '⧉ art').length).toBe(4)
   expect((await ui.findAll({ type: 'Box' })).some(b => b.props.flexWrap === 'wrap')).toBe(true)
   await ui.unmount()
-})
-
-test('headless runs get no render hint', async ($, on) => {
-  const seen: (readonly string[] | undefined)[] = []
-  mock.env(on, {})
-  on('prompt.submit', (_, e) => {
-    seen.push(e.context)
-    return { text: e.text, context: e.context }
-  })
-  await $.prompt.submit({ text: 'hi', wait: false, origin: { kind: 'sdk' } })
-  expect((seen[0] ?? []).some(c => c.includes('prismantis'))).toBe(false)
 })
 
 test('/prismantis theme <name> switches the theme through config', async ($, on) => {

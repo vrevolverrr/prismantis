@@ -46,7 +46,7 @@ test('an escaped trailing pipe stays in the cell', async () => {
   expect(table.rows[0]?.[1]?.map(n => ('text' in n ? n.text : '')).join('')).toBe('y|')
 })
 
-test('copying a table returns its exact markdown', async ($, on) => {
+test('copying a table returns its exact markdown', { options: { copyButtons: true } }, async ($, on) => {
   const copied = stubClipboard(on)
   const source = '| a | b |\n|:--|--:|\n| `x\\|y` | **2** |'
   const ui = await $.ui.mount(mount(source))
@@ -56,7 +56,7 @@ test('copying a table returns its exact markdown', async ($, on) => {
   await ui.unmount()
 })
 
-test('copying a list returns its exact markdown', async ($, on) => {
+test('copying a list returns its exact markdown', { options: { copyButtons: true } }, async ($, on) => {
   const copied = stubClipboard(on)
   const source = '- **bold** item\n  - `code` child'
   const ui = await $.ui.mount(mount(source))
@@ -125,7 +125,7 @@ test('an edge label after a space still draws both nodes', async $ => {
   await ui.unmount()
 })
 
-test('copying a quote returns its text without the > markers', async ($, on) => {
+test('copying a quote returns its text without the > markers', { options: { copyButtons: true } }, async ($, on) => {
   const copied = stubClipboard(on)
   const ui = await $.ui.mount(mount('> built a mod\n> with **colors**'))
   const [button] = await ui.findAll({ type: 'Button' })
@@ -148,7 +148,7 @@ test('a chart that opens with a %% comment still draws', async $ => {
   await ui.unmount()
 })
 
-test('a GitHub alert draws its title and body, and copies without the > markers', async ($, on) => {
+test('a GitHub alert draws its title and body, and copies without the > markers', { options: { copyButtons: true } }, async ($, on) => {
   const copied = stubClipboard(on)
   const ui = await $.ui.mount(mount('> [!WARNING]\n> disk is almost full'))
   expect(await ui.find({ type: 'Text', text: /^Warning$/ })).toBeDefined()
@@ -238,7 +238,7 @@ test('the help screen shows every element prismantis draws', async () => {
   expect(new Set(blocks.flatMap(b => (b.kind === 'heading' ? [b.level] : []))).size >= 4).toBe(true)
   expect(new Set(blocks.flatMap(b => (b.kind === 'alert' ? [b.level] : []))).size).toBe(5)
   const langs = blocks.flatMap(b => (b.kind === 'code' ? [b.lang] : []))
-  for (const lang of ['bash', 'json', 'mermaid']) expect(langs.includes(lang)).toBe(true)
+  for (const lang of ['bash', 'json', 'mermaid', 'math']) expect(langs.includes(lang)).toBe(true)
   expect(blocks.some(b => b.kind === 'list' && b.items.some(i => i.task === true) && b.items.some(i => i.task === false) && b.items.some(i => i.depth > 0 && i.task !== undefined))).toBe(true)
 })
 
@@ -280,7 +280,7 @@ test('drawn replies add no emoji-capable glyphs', async $ => {
   }
 })
 
-test('a table art button copies boxed text ready for Slack', async ($, on) => {
+test('a table art button copies boxed text ready for Slack', { options: { copyButtons: true } }, async ($, on) => {
   const copied = stubClipboard(on)
   const ui = await $.ui.mount(mount('| Queue | Sent |\n|---|--:|\n| tasks-east | 24 |\n| west | 0 |'))
   const art = (await ui.findAll({ type: 'Button' }))[1]
@@ -310,9 +310,9 @@ test('wide table art wraps long cells to stay 100 columns wide', async () => {
   expect(body.filter(l => l.startsWith('│')).slice(1).map(l => l.split('│')[2]!.trim()).join(' ')).toBe(long)
 })
 
-test('copy reply copies the whole reply as written, Hebrew in reading order', { options: { rtl: 'warp' } }, async ($, on) => {
+test('copy reply copies the whole reply as written', { options: { copyButtons: true } }, async ($, on) => {
   const copied = stubClipboard(on)
-  const text = 'שלום חברים, זו הדגמה של prismantis.\n\n| a | b |\n|---|---|\n| 1 | 2 |'
+  const text = 'Deploys per region, from **prismantis**.\n\n| a | b |\n|---|---|\n| 1 | 2 |'
   const ui = await $.ui.mount(mount(text))
   const reply = (await ui.findAll({ type: 'Button' })).find(b => b.props.label === '⧉ copy reply')
   await ui.press({ key: reply!.key! })
@@ -320,7 +320,7 @@ test('copy reply copies the whole reply as written, Hebrew in reading order', { 
   await ui.unmount()
 })
 
-test('a one-paragraph English block gets no copy reply button', async $ => {
+test('a one-paragraph English block gets no copy reply button', { options: { copyButtons: true } }, async $ => {
   const ui = await $.ui.mount(mount('Checking the tests next.'))
   expect((await ui.findAll({ type: 'Button' })).some(b => b.props.label === '⧉ copy reply')).toBe(false)
   await ui.unmount()

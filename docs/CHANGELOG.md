@@ -2,6 +2,27 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] - 2026-10-06
+
+### Added
+
+- LaTeX math: `$$…$$` and ` ```math ` formulas draw as typeset images in kitty and Ghostty, rendered by RaTeX when it is installed. Options `latex` (`auto`, `always`, `off`), `latexCommand`, `latexScale`, `latexCellRatio` and the `mathColor` slot. Formulas that fail to render, and every formula where LaTeX is off, draw as text in a `math` code block.
+- A dim `⧉` beside each typeset formula copies its LaTeX, whatever `copyButtons` says, and shows a `✓` for a moment once copied.
+- A reply that opens with a typeset formula leaves a blank row above it.
+- While LaTeX is on, the session-start note tells Claude that `$$` math renders.
+- `github-dark-minimal` theme: GitHub's dark colors drawn plainly, with white headings and green code, bullets and accents.
+
+### Changed
+
+- The session-start note is shorter: the terminal renders markdown tables and mermaid diagrams, so prefer them over prose, bullet lists or ASCII art for comparisons, flows and numbers. It asks for fenced commands only while copy buttons are on.
+- Copy buttons are off by default; `copyButtons: true` brings them back. Selecting with the mouse copies what is on screen, and Claude Code's `/copy` copies a reply as Claude wrote it.
+- The diagram hint reaches the model once, when a session starts or is cleared, resumed or compacted, instead of riding on every prompt. It is on while `mermaid` is on.
+
+### Removed
+
+- Right-to-left support: the `rtl` option, terminal detection and `/prismantis demo-rtl`. Hebrew and Arabic draw like any other text.
+- The `diagramHints` option.
+
 ## [0.8.0] - 2026-10-05
 
 ### Added

@@ -1,15 +1,15 @@
 {
   "name": "prismantis",
   "owner": {
-    "name": "Nahum Litvin",
-    "url": "https://github.com/NahumLitvin"
+    "name": "vrevolverrr",
+    "url": "https://github.com/vrevolverrr"
   },
   "plugins": [
     {
       "name": "prismantis",
       "description": "Colorful, themeable rendering for Claude Code replies: tables, headings, code, numbers, paths and links.",
       "source": "./",
-      "version": "0.8.0",
+      "version": "0.9.0",
       "category": "appearance",
       "tags": [
         "mod",

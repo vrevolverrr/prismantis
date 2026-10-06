@@ -1,10 +1,16 @@
 <h1 align="center"><img src="docs/brand/banner.png" alt="prismantis" width="640"></h1>
 
-[![ci](https://github.com/NahumLitvin/prismantis/actions/workflows/ci.yml/badge.svg)](https://github.com/NahumLitvin/prismantis/actions/workflows/ci.yml)
-
 > Sees 16 colors. Your terminal only had 8.
 
-Colorful, themeable replies for [Claude Code](https://claude.com/claude-code): tables, code, diagrams, charts and tool calls, in 15 themes, with copy buttons on everything.
+Colorful, themeable replies for [Claude Code](https://claude.com/claude-code): tables, code, diagrams, charts, LaTeX math and tool calls, in 16 themes.
+
+This is a fork of [NahumLitvin/prismantis](https://github.com/NahumLitvin/prismantis). What differs:
+
+- [LaTeX math](#latex-math): `$$` formulas typeset as images in kitty and Ghostty, with a copy icon on each
+- the [model note](#diagram-hints) arrives once at session start instead of on every prompt, and has no option
+- [copy buttons](#copy-buttons) are off by default; Claude Code's `/copy` covers whole replies
+- a `github-dark-minimal` [theme](#themes)
+- no right-to-left (Hebrew, Arabic) layout
 
 ![prismantis on the default Catppuccin Mocha theme: a boxed title, a section heading, a table, a nested list, a flowchart, a sequence diagram, a bar chart with values and its tallest bar highlighted, a line chart, highlighted TypeScript and shell blocks, a tip alert and copy buttons](docs/screenshot.png)
 
@@ -12,19 +18,19 @@ Colorful, themeable replies for [Claude Code](https://claude.com/claude-code): t
 
 | Feature | What you get |
 | --- | --- |
-| [Themes](#themes) | `/prismantis theme <name>` switches on the spot. 15 MIT palettes (Catppuccin, Dracula, Nord, Tokyo Night, Gruvbox, Rosé Pine, Everforest, GitHub, One Dark, Solarized) plus 20 color slots you can override |
+| [Themes](#themes) | `/prismantis theme <name>` switches on the spot. 16 MIT palettes (Catppuccin, Dracula, Nord, Tokyo Night, Gruvbox, Rosé Pine, Everforest, GitHub, One Dark, Solarized) plus 21 color slots you can override |
 | [Tables](#tables) | colored headers, rules, column alignment, colored numbers, sized to the terminal |
-| [Code](#code) | a language header and copy button, Prism highlighting in 24 languages, shell lines colored like a prompt |
+| [Code](#code) | a language header, Prism highlighting in 24 languages, shell lines colored like a prompt |
 | [Diagrams and charts](#diagrams-and-charts) | flowcharts, sequence, state, class and ER diagrams, bar and line charts, one color per box, participant and bar |
+| [LaTeX math](#latex-math) | `$$` and ` ```math ` formulas typeset as images in kitty and Ghostty by [RaTeX](https://github.com/erweixin/RaTeX), text everywhere else |
 | [Layout](#layout) | back-to-back tables and diagrams sit side by side and wrap on narrow terminals |
-| [Copy buttons](#copy-buttons) | `[ ⧉ copy ]` on code, tables, lists and quotes, plus `⧉ art` on tables and diagrams for pasting into Slack |
+| [Copy buttons](#copy-buttons) | off by default; on, `[ ⧉ copy ]` on code, tables, lists and quotes, plus `⧉ art` on tables and diagrams for pasting into Slack |
 | [Tool rows](#tool-rows) | `Ran gh pr view 12`, `Read ~/src/app.ts`, groups summed up as `Ran 3 commands, read 2 files`, with status dots |
 | [Turn footer](#turn-footer) | `✻ Baked for 6m 20s` with the duration in the number color |
 | [Slash commands](#slash-commands) | command output (`/cost`, `/context`, plugin commands) gets the same tables and code styling |
-| [Diagram hints](#diagram-hints) | a short model-only note on each prompt so Claude reaches for diagrams and charts when they help |
+| [Diagram hints](#diagram-hints) | a short model-only note at session start so Claude reaches for diagrams and charts when they help |
 | [Text](#text) | bold, italic, strikethrough, inline code, links, versions, durations, percentages and paths in their own colors |
 | [Headings, lists, quotes](#headings-lists-quotes) | 4 heading styles, nested lists, task lists, quotes with an accent bar |
-| [Right to left](#right-to-left) | Hebrew and Arabic read right to left, right aligned, with bullets, quote bars and table columns mirrored, in Warp, kitty, Apple Terminal and more |
 
 Try it: ask Claude to print [docs/demo.md](docs/demo.md) verbatim as its whole reply. Every feature is in there.
 
@@ -33,7 +39,7 @@ Try it: ask Claude to print [docs/demo.md](docs/demo.md) verbatim as its whole r
 Requires Claude Code **2.1.287** or later.
 
 ```
-/plugin marketplace add NahumLitvin/prismantis
+/plugin marketplace add vrevolverrr/prismantis
 ```
 
 ```
@@ -42,15 +48,19 @@ Requires Claude Code **2.1.287** or later.
 
 To update, run `claude plugin marketplace update prismantis && claude plugin update prismantis@prismantis`, then `/reload` in every open session. A session keeps the version it loaded until it reloads.
 
+For LaTeX math, also put RaTeX's renderer on your `PATH`; see [LaTeX math](#latex-math). Without it, formulas draw as text.
+
 Tested in the terminal on macOS; CI runs the tests on macOS, Linux and Windows. The desktop app, VS Code and mobile should work through the same mod API but have not been checked by hand yet. Turn it off any time in `/plugin`, and Claude Code's own renderer comes back. Press ctrl+o on a reply to see the original.
 
-It's a [Claude Code mod](https://claude.com/blog/claude-code-mods) in plain TypeScript. It bundles two MIT libraries, [beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid) for diagrams and [Prism](https://github.com/PrismJS/prism) for highlighting. It makes no network calls, reads no files and runs no commands. It redraws text already on your screen and, with `diagramHints` on, attaches a short model-only note to your prompts.
+It's a [Claude Code mod](https://claude.com/blog/claude-code-mods) in plain TypeScript. It bundles two MIT libraries, [beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid) for diagrams and [Prism](https://github.com/PrismJS/prism) for highlighting. It makes no network calls. It redraws text already on your screen and, while `mermaid` is on, hands the model a short note when a session starts. The one program it runs is the optional RaTeX renderer, for [LaTeX math](#latex-math), and only where it is installed and the terminal can show images; `latex: off` stops that too.
 
 ### Themes
 
-Dark: `catppuccin-mocha` (default), `dracula`, `nord`, `tokyo-night`, `gruvbox-dark`, `rose-pine`, `everforest`, `github-dark`, `one-dark`, `solarized-dark`.
+Dark: `catppuccin-mocha` (default), `dracula`, `nord`, `tokyo-night`, `gruvbox-dark`, `rose-pine`, `everforest`, `github-dark`, `github-dark-minimal`, `one-dark`, `solarized-dark`.
 
 Light: `catppuccin-latte`, `gruvbox-light`, `rose-pine-dawn`, `github-light`, `solarized-light`.
+
+`github-dark-minimal` keeps GitHub's dark colors but draws plainly: white headings, green code and bullets, numbers and the reply marker in green, few other colors.
 
 Switch on the spot with `/prismantis theme nord`, or run `/prismantis` for the help screen with every theme. `mono` uses no color, only bold and dim. Every palette is MIT licensed and credited in [THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md).
 
@@ -60,7 +70,7 @@ Header cells take the `tableHeader` color, and every cell sits in a box with a d
 
 ### Code
 
-Code blocks get a header row with the language on the left and a copy button on the right, and the code sits indented below with no frame, so selecting it with the mouse copies only the code.
+Code blocks get a header row with the language on the left (and a copy button on the right when `copyButtons` is on), and the code sits indented below with no frame, so selecting it with the mouse copies only the code.
 
 - **Prism** highlights JavaScript, TypeScript, JSX/TSX, Python, Go, Rust, Java, Kotlin, Swift, C, C++, C#, Ruby, JSON, YAML, TOML, SQL, HTML, CSS, Dockerfile, HCL and diff: keywords, strings, numbers, comments, keys, functions and properties each get a theme color.
 - **Shell** blocks (`bash`, `sh`, `zsh`, unlabeled) color the command word, `--flags`, quoted strings and `# comments`, and restart after `|`, `&&` and `;`.
@@ -76,13 +86,29 @@ Code blocks tagged `mermaid` draw as colored text art:
 
 Diagrams too wide for the window, or over 80 lines, stay as code. `mermaidAscii` swaps box-drawing characters for `+ - |`. Pie charts are not supported.
 
+### LaTeX math
+
+Display math, `$$…$$` on lines of its own or a ` ```math ` block, draws as a typeset image in the formula color (`mathColor`, or the theme's text color), with a dim `⧉` beside it that copies the formula's LaTeX, since selecting an image copies blank cells; it turns into a `✓` for a moment once copied. A reply that opens with a formula leaves a blank row above it. It needs [RaTeX](https://github.com/erweixin/RaTeX)'s PNG renderer, a single binary that typesets KaTeX syntax in a few milliseconds without TeX, a browser or Node:
+
+```bash
+gh release download -R erweixin/RaTeX -p 'ratex-cli-*-aarch64-apple-darwin.tar.gz'
+tar -xzf ratex-cli-*.tar.gz
+install ratex-cli-*/render ~/.local/bin/ratex-render
+```
+
+Pick the archive for your platform (`x86_64-apple-darwin`, `x86_64-unknown-linux-musl`, ...). Any directory on your `PATH` works; elsewhere, set `latexCommand` to the binary's path.
+
+With `latex` on `auto` (the default), prismantis runs the renderer once at session start in kitty and Ghostty, outside tmux, and turns LaTeX on only if that test formula comes back. Anywhere else, without the renderer, or with `latex: off`, formulas draw as text in a `math` code block. So does a formula the renderer rejects, or one too wide for the terminal even at one row. `always` skips the terminal check. While LaTeX is on, the session-start note tells Claude that `$$` math renders. `latexScale` sets the size (2 doubles it) and `latexCellRatio` your font's cell width over height, so formulas keep their shape. Inline `$…$` stays text.
+
 ### Layout
 
 When tables and diagrams follow each other, they share a row and wrap to the next line once the terminal runs out of width. A wide terminal shows a table, a flowchart and two charts side by side.
 
 ### Copy buttons
 
-`[ ⧉ copy ]`, drawn in Claude Code's accent color, sits on code blocks, tables, lists and quotes and puts the raw markdown on your clipboard. Quotes copy without their `> ` markers, ready to paste as a message. Diagrams get two: `⧉ source` copies the mermaid code and `⧉ art` copies the drawn art, ready to paste into a chat code block. Tables get `⧉ art` too: a plain boxed table that reads right in Slack, where pasted markdown does not. Replies end with `⧉ copy reply`, which copies the reply as Claude wrote it (one-line English narration gets none). Use it for Hebrew and Arabic: selecting right-to-left text on screen copies the letters in the order they are drawn, not the order they are read. Press `ctrl+x` then `tab` to move focus onto the buttons and Enter to copy; that works in every terminal. Clicking works where the terminal passes clicks through (fullscreen mode does); terminals with copy-on-select, such as Warp, may grab the word "copy" instead.
+Off by default; `copyButtons: true` turns them on. Without them, selecting with the mouse copies what is on screen, and Claude Code's `/copy` copies a whole reply as Claude wrote it, tables as markdown and LaTeX as written (`/copy 2` for the one before; "Skip the /copy picker" in `/config` stops it asking about code blocks). Claude Code copies a selection itself, so a mod cannot change what it takes.
+
+When on, `[ ⧉ copy ]`, drawn in Claude Code's accent color, sits on code blocks, tables, lists and quotes and puts the raw markdown on your clipboard. Quotes copy without their `> ` markers, ready to paste as a message. Diagrams get two: `⧉ source` copies the mermaid code and `⧉ art` copies the drawn art, ready to paste into a chat code block. Tables get `⧉ art` too: a plain boxed table that reads right in Slack, where pasted markdown does not. Replies end with `⧉ copy reply`, which copies the reply as Claude wrote it (a single-block reply, like one line of narration, gets none). Press `ctrl+x` then `tab` to move focus onto the buttons and Enter to copy; that works in every terminal. Clicking works where the terminal passes clicks through (fullscreen mode does); terminals with copy-on-select, such as Warp, may grab the word "copy" instead.
 
 ### Tool rows
 
@@ -94,11 +120,11 @@ The line that closes a turn keeps Claude Code's word and colors the duration: `�
 
 ### Slash commands
 
-Output from slash commands, built-in or from other plugins, is parsed as markdown and drawn like a reply, copy buttons included. Errors keep Claude Code's own red line.
+Output from slash commands, built-in or from other plugins, is parsed as markdown and drawn like a reply, copy buttons too when they are on. Errors keep Claude Code's own red line.
 
 ### Diagram hints
 
-Claude rarely writes a chart unless it knows the terminal can draw one. With `diagramHints` on (the default), prismantis attaches a short note to each prompt you type, read by the model and never shown, saying tables, alerts, code, mermaid diagrams and `xychart-beta` charts render here and to use one when a numeric series or a flow is easier to see than read. It also asks for commands in fenced blocks, since only those get a copy button. It costs about 190 tokens per prompt. It's off whenever `mermaid` is off, and skipped for headless `claude -p` runs and background notifications. Claude Code doesn't let installed plugins edit the system prompt (its built-in `sec-default` policy keeps that for the organization), so the note rides along with your prompt instead.
+Claude rarely writes a chart unless it knows the terminal can draw one. While `mermaid` is on, prismantis hands the model a short note when a session starts, and again after `/clear`, a resume or a compaction, never shown, saying markdown tables and mermaid diagrams (including `xychart-beta` charts) render here, and to prefer them over prose, bullet lists or ASCII art for comparisons, flows and numbers. With `copyButtons` on, it also asks for commands in fenced blocks, since only those get a copy button. It costs well under 100 tokens, once, not on every prompt. Claude Code doesn't let installed plugins edit the system prompt (its built-in `sec-default` policy keeps that for the organization), so the note arrives as `SessionStart` hook context instead.
 
 ### Text
 
@@ -111,13 +137,6 @@ Claude rarely writes a chart unless it knows the terminal can draw one. With `di
 Task lists draw as `[ ]` and `[✓]`, with done items dimmed and struck through. `taskStyle` switches to `ticks` (`○` `✓`), `box` (`□` `✓`) or `progress`, which adds a done-count bar above each list.
 
 ![A task list with done items struck through](docs/task-lists.png)
-
-
-### Right to left
-
-![Hebrew drawn right to left](docs/rtl.png)
-
-Hebrew and Arabic blocks are right aligned, with bullets, numbers and quote bars on the right and table columns mirrored, while code, numbers, paths and links stay left to right inside them. Terminals differ in how they treat right-to-left letters, so prismantis detects yours and sends the letters the way it needs them. `/prismantis demo-rtl` shows every element, and the `rtl` option forces a terminal's handling or turns it off.
 
 ## Configure
 
@@ -147,11 +166,13 @@ Open `/config` and look for the **prismantis** rows, or set values in `~/.claude
 | `highlightNumbers` | `true`, `false` | `true` |
 | `highlightPaths` | `true`, `false` | `true` |
 | `toolRows` | `true`, `false` | `true` |
-| `copyButtons` | `true`, `false` | `true` |
-| `diagramHints` | `true`, `false` | `true` |
-| `rtl` | `auto`, a terminal (`warp`, `kitty`, `apple-terminal`, `iterm`, `ghostty`, `wezterm`, `vscode`, `alacritty`, `windows-terminal`, `gnome`, `konsole`), `off` | `auto` |
+| `copyButtons` | `true`, `false` | `false` |
 | `mermaid` | `true`, `false` | `true` |
 | `mermaidAscii` | `true`, `false` | `false` |
+| `latex` | `auto`, `always`, `off` | `auto` |
+| `latexCommand` | a binary on your `PATH` or a full path | `ratex-render` |
+| `latexScale` | `0.25` to `10` | `1` |
+| `latexCellRatio` | `0.1` to `2` | `0.5` |
 | `<token>Color` | any color, see below | theme |
 
 A color is hex (`#a6e3a1`, `#fc0`), `rgb(166,227,161)`, `ansi256(114)` or a name (`green`, `cyanBright`). Values that don't parse are ignored. Every token has a `<token>Color` option and a row in `/config`:
@@ -178,20 +199,22 @@ A color is hex (`#a6e3a1`, `#fc0`), `rgb(166,227,161)`, `ansi256(114)` or a name
 | `bullet` | list bullets and numbers |
 | `diagram` | diagram lines |
 | `diagramText` | diagram labels |
+| `math` | typeset LaTeX formulas |
 
 ## Limits
 
 - The parser covers what Claude writes (headings, lists, tables, fences, quotes, emphasis, links). It's not full CommonMark: nested quotes and HTML draw as plain text.
-- Widths count CJK and emoji as two columns. Terminals disagree on a few emoji, so those can still be off by one.- Languages outside the 24 above draw in `codeText`.
+- Widths count CJK and emoji as two columns. Terminals disagree on a few emoji, so those can still be off by one.
+- Languages outside the 24 above draw in `codeText`.
 
 ## Roadmap
 
-Planned features are on the [roadmap board](https://github.com/users/NahumLitvin/projects/2), one issue each. Give an issue a 👍 to vote for it, or open one for what you miss.
+Upstream's planned features are on its [roadmap board](https://github.com/users/NahumLitvin/projects/2). This fork's own changes are in the [CHANGELOG](docs/CHANGELOG.md).
 
 ## Develop
 
 ```
-git clone https://github.com/NahumLitvin/prismantis
+git clone https://github.com/vrevolverrr/prismantis
 claude --plugin-dir ./prismantis
 ```
 
@@ -199,7 +222,7 @@ Edits hot-reload in that session. Before a PR run `claude plugin validate .` and
 
 ## Author
 
-Built by [Nahum Litvin](https://github.com/NahumLitvin), who writes about running untrusted code in production at [catchkill9.dev](https://www.catchkill9.dev/).
+Built by [Nahum Litvin](https://github.com/NahumLitvin), who writes about running untrusted code in production at [catchkill9.dev](https://www.catchkill9.dev/). This fork is maintained by [vrevolverrr](https://github.com/vrevolverrr).
 
 ## License
 

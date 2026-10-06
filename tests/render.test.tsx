@@ -200,7 +200,7 @@ test('back-to-back tables and diagrams share a wrapping row', async $ => {
   await ui.unmount()
 })
 
-test('code blocks, tables and quotes get a copy button, tables an art button, the reply a copy reply button', async ($, on) => {
+test('code blocks, tables and quotes get a copy button, tables an art button, the reply a copy reply button', { options: { copyButtons: true } }, async ($, on) => {
   const copied: string[] = []
   on('ui.copy', (_, e) => {
     copied.push(e.text)
@@ -216,13 +216,13 @@ test('code blocks, tables and quotes get a copy button, tables an art button, th
   await ui.unmount()
 })
 
-test('copyButtons off draws no buttons', { options: { copyButtons: false } }, async $ => {
-  const ui = await $.ui.mount({ ...draw('```bash\nls\n```'), surface: 'terminal' })
+test('copy buttons are off by default', async $ => {
+  const ui = await $.ui.mount({ ...draw(`${TABLE}\n\n\`\`\`bash\nls\n\`\`\``), surface: 'terminal' })
   expect(await ui.findAll({ type: 'Button' })).toHaveLength(0)
   await ui.unmount()
 })
 
-test('lists copy as markdown', async ($, on) => {
+test('lists copy as markdown', { options: { copyButtons: true } }, async ($, on) => {
   const copied: string[] = []
   on('ui.copy', (_, e) => {
     copied.push(e.text)
@@ -235,7 +235,7 @@ test('lists copy as markdown', async ($, on) => {
   await ui.unmount()
 })
 
-test('diagrams offer two copies: mermaid source and drawn art', async ($, on) => {
+test('diagrams offer two copies: mermaid source and drawn art', { options: { copyButtons: true } }, async ($, on) => {
   const copied: string[] = []
   on('ui.copy', (_, e) => {
     copied.push(e.text)
@@ -293,4 +293,11 @@ test('tableStyle rules keeps the open look', { options: { tableStyle: 'rules' } 
   const ui = await $.ui.mount({ ...draw(TABLE), surface: 'terminal' })
   expect(await ui.find({ type: 'Text', text: /┌|│/ })).toBeUndefined()
   await ui.unmount()
+})
+
+test('github-dark-minimal resolves to its own palette', async () => {
+  const { theme } = resolveStyle({ theme: 'github-dark-minimal' })
+
+  expect(theme.tableHeader).toBe('#ffffff')
+  expect(theme.codeText).toBe('#7ee787')
 })

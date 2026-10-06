@@ -37,7 +37,7 @@ Colored markdown for Claude Code replies: **bold**, *italic*, ~~struck~~, \`inli
 > After updating the plugin, open sessions need \`/reload\`.
 
 > [!WARNING]
-> Terminals that copy on select (Warp) can turn a click on a copy button into a selection. Use the keyboard shortcut.
+> Selecting a typeset formula copies blank cells. Its ⧉ copies the LaTeX.
 
 > [!CAUTION]
 > Claude Code refuses trees over 20000 nodes. A code block past about 500 highlighted lines falls back to plain text.
@@ -52,7 +52,7 @@ Colored markdown for Claude Code replies: **bold**, *italic*, ~~struck~~, \`inli
 
 ### Quotes and rules
 
-> A quote keeps its text when you copy it, without the \`> \` markers.
+> Quotes get an accent bar.
 
 ---
 
@@ -61,6 +61,12 @@ Colored markdown for Claude Code replies: **bold**, *italic*, ~~struck~~, \`inli
 \`\`\`json
 { "theme": "dracula", "headingStyle": "banner", "mermaid": true }
 \`\`\`
+
+#### Math
+
+$$
+\\int_0^\\infty e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}
+$$
 
 #### Diagrams
 
@@ -84,9 +90,9 @@ sequenceDiagram
 \`\`\`mermaid
 xychart-beta
     title "Color options per group"
-    x-axis [text, head, num, code, diag]
+    x-axis [text, head, num, code, diag, math]
     y-axis "options" 0 --> 8
-    bar [7, 3, 2, 6, 2]
+    bar [7, 3, 2, 6, 2, 1]
 \`\`\`
 `
 
@@ -97,7 +103,6 @@ export const helpText = (themes: readonly string[]): string => `
 |---------|------|
 | \`/prismantis theme <name>\` | Switch theme on the spot |
 | \`/prismantis demo\` | Full showcase, every element and diagram |
-| \`/prismantis demo-rtl\` | Hebrew right-to-left showcase |
 
 ### ${themes.length} themes
 
@@ -111,7 +116,7 @@ export const helpText = (themes: readonly string[]): string => `
 ### Task lists
 
 - [x] Tables, diagrams and charts drawn in the terminal
-- [x] A copy button on every block
+- [x] LaTeX math as images in kitty and Ghostty
 - [ ] Pick a \`taskStyle\` in \`/config\`: checks, ticks, box or progress
 
 \`\`\`mermaid
@@ -124,39 +129,11 @@ flowchart LR
 \`\`\`mermaid
 xychart-beta
     title "Color options per group"
-    x-axis [text, head, num, code, diag]
+    x-axis [text, head, num, code, diag, math]
     y-axis "options" 0 --> 8
-    bar [7, 3, 2, 6, 2]
+    bar [7, 3, 2, 6, 2, 1]
 \`\`\`
 
 > [!CAUTION]
 > Claude Code refuses trees over 20000 nodes. A code block past about 500 highlighted lines falls back to plain text.
-`
-
-export const rtlShowcaseText = (): string => `
-# עברית מימין לשמאל
-
-**שלום חברים**, זו הדגמה של עברית עם מונחים באנגלית כמו \`kubectl\`, מספרים כמו 99.9% ו-250ms, נתיב כמו ~/src/app.ts וגם [קישור](https://github.com/NahumLitvin/prismantis).
-
-## רשימות
-
-- פרוסים בשני אזורים (us-east ו-eu-west)
-- מחליפים ערכת נושא עם \`/prismantis theme nord\`
-
-1. מתקינים את התוסף
-2. שואלים שאלה בעברית
-
-> עברית נקראת מימין לשמאל, גם בטרמינל בלי תמיכה בכיווניות
-
-> [!TIP]
-> כל ערכת נושא עובדת גם בעברית
-
-| שירות | אזור | גרסה |
-| :--- | :--- | ---: |
-| שער | us-east | 2.14.0 |
-| חיוב | eu-west | 1.8.3 |
-
-\`\`\`bash
-ls -la # רשימת הקבצים בתיקייה
-\`\`\`
 `

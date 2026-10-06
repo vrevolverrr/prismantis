@@ -18,7 +18,7 @@ The visual test. Unit tests prove the tree; this proves the look.
    - shell colors: command, flags, the quoted string, `&&`
    - code blocks with a language header and no frame, and Prism colors in the TypeScript block
    - path, link and inline-code colors, the quote bar, and the green `Tip` alert box
-   - an accent `[ ⧉ copy ]` button on the table, every diagram, the list, the shell block, the alert and the quote
-   - the Hebrew section: lines read right to left (the first bullet shows `eu-west` and `us-east` after the Hebrew, mirrored parentheses), bullets and `1.` on the right, the quote bar on the right, the table cells right aligned, and the shell comment reversed while `ls -la` stays
+   - with `copyButtons` on, an accent `[ ⧉ copy ]` button on the table, every diagram, the list, the shell block, the alert and the quote
+   - the `$$` sum formula as a typeset image with a dim `⧉` beside it in kitty or Ghostty with `ratex-render` installed, a `math` code block elsewhere
 4. **Fix what looks wrong**, then run the demo again.
 5. **Keep it current.** A new feature adds a line to `docs/demo.md` and to the checklist above. All data stays invented and neutral.

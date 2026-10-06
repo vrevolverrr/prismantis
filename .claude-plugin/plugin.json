@@ -1,14 +1,15 @@
 {
   "name": "prismantis",
-  "version": "0.8.0",
-  "description": "Colorful, themeable rendering for Claude Code replies: tables, headings, code, numbers, paths and links.",
+  "version": "0.9.0",
+  "description": "Colorful, themeable rendering for Claude Code replies: tables, headings, code, diagrams, LaTeX math, numbers, paths and links.",
   "author": {
     "name": "Nahum Litvin",
     "url": "https://github.com/NahumLitvin"
   },
-  "homepage": "https://github.com/NahumLitvin/prismantis",
-  "repository": "https://github.com/NahumLitvin/prismantis",
+  "homepage": "https://github.com/vrevolverrr/prismantis",
+  "repository": "https://github.com/vrevolverrr/prismantis",
   "license": "MIT",
+  "types": "./types/index.d.ts",
   "keywords": [
     "mod",
     "theme",
@@ -41,6 +42,7 @@
         "rose-pine-dawn",
         "everforest",
         "github-dark",
+        "github-dark-minimal",
         "github-light",
         "one-dark",
         "solarized-dark",
@@ -78,27 +80,6 @@
       "description": "How - [ ] and - [x] items draw. checks: [ ] and [✓] with done items dimmed and struck through. ticks: ○ and ✓, done items dimmed. box: □ and ✓, done items dimmed and struck through. progress: ticks with a done-count bar above each list.",
       "default": "checks",
       "options": ["checks", "ticks", "box", "progress"]
-    },
-    "rtl": {
-      "type": "string",
-      "title": "Right-to-left terminal",
-      "description": "Hebrew and Arabic get a right-to-left layout (right aligned, bullets and quote bars on the right, tables mirrored), with the letters sent the way your terminal needs them. auto detects the terminal; pick one to force its handling, or off for none.",
-      "default": "auto",
-      "options": [
-        "auto",
-        "warp",
-        "kitty",
-        "apple-terminal",
-        "iterm",
-        "ghostty",
-        "wezterm",
-        "vscode",
-        "alacritty",
-        "windows-terminal",
-        "gnome",
-        "konsole",
-        "off"
-      ]
     },
     "highlightNumbers": {
       "type": "boolean",
@@ -253,14 +234,39 @@
     "copyButtons": {
       "type": "boolean",
       "title": "Copy buttons",
-      "description": "Put a copy button on code blocks, tables, diagrams, lists and quotes. Reach them with ctrl+x tab then Enter, or click where the terminal passes clicks through.",
-      "default": true
+      "description": "Put a copy button on code blocks, tables, diagrams, lists and quotes, and a copy reply button under replies. Off by default: select-copy takes what is on screen, and /copy takes a reply as Claude wrote it.",
+      "default": false
     },
-    "diagramHints": {
-      "type": "boolean",
-      "title": "Diagram hints",
-      "description": "Attach a short note, read by the model and never shown, to each prompt you type, saying tables, code, mermaid diagrams and charts render here. About 190 tokens per prompt. Off when mermaid is off.",
-      "default": true
+    "latex": {
+      "type": "string",
+      "title": "LaTeX math",
+      "description": "Draw $$ and ```math formulas as typeset images with RaTeX. auto: in kitty and Ghostty (not under tmux) when the renderer runs. always: in any terminal, where others show the formula text. off: never run the renderer. Formulas that fail to render stay as text.",
+      "default": "auto",
+      "options": ["auto", "always", "off"]
+    },
+    "latexCommand": {
+      "type": "string",
+      "title": "LaTeX renderer",
+      "description": "RaTeX's PNG renderer (the render binary from its release archive), by name on your PATH or as a full path.",
+      "default": "ratex-render"
+    },
+    "latexScale": {
+      "type": "number",
+      "title": "LaTeX size",
+      "description": "How tall formulas draw: 1 is the default size, 2 doubles it. 0.25 to 10.",
+      "default": 1
+    },
+    "latexCellRatio": {
+      "type": "number",
+      "title": "LaTeX cell ratio",
+      "description": "Your terminal cell's width divided by its height, so formulas keep their shape. Most fonts are about 0.5. 0.1 to 2.",
+      "default": 0.5
+    },
+    "mathColor": {
+      "type": "string",
+      "title": "Math",
+      "description": "Color for typeset LaTeX formulas. Hex, rgb(), ansi256() or a name. Empty uses the theme's text color.",
+      "default": ""
     }
   }
 }

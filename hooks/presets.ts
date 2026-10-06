@@ -67,6 +67,12 @@ export const PRESETS = {
     codeComment: '#7d8590', link: '#58a6ff', path: '#7ee787', number: '#79c0ff', quote: '#7d8590',
     rule: '#30363d', tableRule: '#8b949e', bullet: '#ff7b72', diagram: '#58a6ff', diagramText: '#e6edf3',
   },
+  'github-dark-minimal': {
+    accent: '#7ee787', heading: '#ffffff', tableHeader: '#ffffff', strong: '#ffffff', emphasis: '#e6edf3',
+    inlineCode: '#e6edf3', codeText: '#7ee787', codeCommand: '#d2a8ff', codeFlag: '#ff7b72', codeString: '#a5d6ff',
+    codeComment: '#7d8590', link: '#58a6ff', path: '#e6edf3', number: '#7ee787', quote: '#7d8590',
+    rule: '#21262d', tableRule: '#30363d', bullet: '#7ee787', diagram: '#8b949e', diagramText: '#e6edf3',
+  },
   'github-light': {
     accent: '#8250df', heading: '#0550ae', tableHeader: '#953800', strong: '#1f2328', emphasis: '#8250df',
     inlineCode: '#0550ae', codeText: '#1f2328', codeCommand: '#8250df', codeFlag: '#cf222e', codeString: '#0a3069',
