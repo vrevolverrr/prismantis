@@ -455,7 +455,7 @@ export const renderToolRow = (el: ElementTable, style: Style, row: ToolRow): Ren
   const isPath = target !== undefined && /^(~|\.{0,2}\/|[A-Za-z]:\\)/.test(target)
 
   return (
-    <Box flexDirection="row">
+    <Box marginTop={1} flexDirection="row">
       <Box width={2} flexShrink={0}>
         <Text color={dot}>{row.isRunning ? '◌' : '●'}</Text>
       </Box>
@@ -484,7 +484,7 @@ export const renderExpandedShell = (el: ElementTable, style: Style, row: ToolRow
   const visible = shown.slice(0, OUTPUT_LINES)
   const dot = row.isErrored ? t.codeFlag : row.isInterrupted ? t.codeComment : row.isRunning ? t.accent : t.number
   return (
-    <Box flexDirection="column">
+    <Box marginTop={1} flexDirection="column">
       <Box flexDirection="row">
         <Box width={2} flexShrink={0}>
           <Text color={dot}>{row.isRunning ? '◌' : '●'}</Text>
@@ -545,7 +545,7 @@ export const renderToolGroup = (el: ElementTable, style: Style, calls: readonly 
   const last = calls[calls.length - 1]
   const lastTarget = last ? field(last.input, 'command', 'file_path', 'notebook_path', 'path', 'pattern', 'url', 'query', 'description')?.split('\n')[0] : undefined
   return (
-    <Box flexDirection="row">
+    <Box marginTop={1} flexDirection="row">
       <Box width={2} flexShrink={0}>
         <Text color={dot}>{running ? '◌' : '●'}</Text>
       </Box>
@@ -565,9 +565,11 @@ export const formatDuration = (ms: number): string => {
   return `${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m`
 }
 
-export const renderTurnDuration = ({ Text }: ElementTable, style: Style, word: string, durationMs: number): RenderElement => (
-  <Text color={style.theme.codeComment}>
-    {`✻ ${word} for `}
-    <Text color={style.theme.number}>{formatDuration(durationMs)}</Text>
-  </Text>
+export const renderTurnDuration = ({ Box, Text }: ElementTable, style: Style, word: string, durationMs: number): RenderElement => (
+  <Box marginTop={1}>
+    <Text color={style.theme.codeComment}>
+      {`✻ ${word} for `}
+      <Text color={style.theme.number}>{formatDuration(durationMs)}</Text>
+    </Text>
+  </Box>
 )

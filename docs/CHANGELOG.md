@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.9.1] - 2026-10-06
+
+### Fixed
+
+- Replies, tool rows, tool groups and the turn footer keep the blank row Claude Code draws above them, so a prompt, its reply and the turn footer no longer touch. This replaces the blank row only formula-led replies got.
+
 ## [0.9.0] - 2026-10-06
 
 ### Added

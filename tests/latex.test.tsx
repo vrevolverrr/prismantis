@@ -312,18 +312,3 @@ test('pressing the copy icon shows a tick for a moment, then the icon again', as
   expect(icons(await ui.findAll({ type: 'Button' }))).toHaveLength(1)
   await ui.unmount()
 })
-
-test('a reply that starts with a formula leaves a blank row above it', async ($, on) => {
-  mock.env(on, KITTY)
-  const clock = mock.clock(on)
-  ratex(on)
-
-  const leading = await $.ui.mount(reply('$$\nE = mc^2\n$$\n\nEnergy.'))
-  const trailing = await $.ui.mount(reply('Energy:\n\n$$\nE = mc^2\n$$'))
-  await clock.settle()
-
-  expect((await leading.findAll({ type: 'Box' }))[0]?.props.paddingTop).toBe(1)
-  expect((await trailing.findAll({ type: 'Box' }))[0]?.props.paddingTop).toBe(0)
-  await leading.unmount()
-  await trailing.unmount()
-})

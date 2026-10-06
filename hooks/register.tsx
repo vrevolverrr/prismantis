@@ -30,11 +30,6 @@ const tick = async ($: EngineInterface, key: string): Promise<void> => {
   })
 }
 
-const leadsWithFormula = (blocks: ReturnType<typeof parse>, math: Map<number, Typeset>, style: Style, columns: number): boolean => {
-  const typeset = math.get(0)
-  return typeset !== undefined && blocks[0]?.kind === 'code' && fitFormula(typeset, style, columns) !== null
-}
-
 type Typeset = { tex: string; png: string; width: number; height: number }
 
 const showsImages = async ($: EngineInterface): Promise<boolean> => {
@@ -217,7 +212,7 @@ export const register: Register = (on, options) => {
     const math = e.surface === 'terminal' ? await mathOfBlocks($, latex, blocks) : new Map<number, Typeset>()
     const copied = math.size ? await read($, copiedFormula) : null
     return (
-      <Box flexDirection="column" rowGap={1} paddingTop={leadsWithFormula(blocks, math, style, columns) ? 1 : 0}>
+      <Box flexDirection="column" rowGap={1}>
         {drawMarkdown($, el, style, blocks, columns, math, e.requestId, copied)}
       </Box>
     )
@@ -232,7 +227,7 @@ export const register: Register = (on, options) => {
     const math = e.surface === 'terminal' ? await mathOfBlocks($, latex, blocks) : new Map<number, Typeset>()
     const copied = math.size ? await read($, copiedFormula) : null
     return (
-      <Box flexDirection="row" paddingTop={leadsWithFormula(blocks, math, style, columns) ? 1 : 0}>
+      <Box flexDirection="row" marginTop={1}>
         <Box width={2} flexShrink={0}>
           <Text color={style.theme.accent}>{e.props.isFirstOfReply ? '●' : ' '}</Text>
         </Box>

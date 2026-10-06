@@ -88,7 +88,7 @@ Diagrams too wide for the window, or over 80 lines, stay as code. `mermaidAscii`
 
 ### LaTeX math
 
-Display math, `$$…$$` on lines of its own or a ` ```math ` block, draws as a typeset image in the formula color (`mathColor`, or the theme's text color), with a dim `⧉` beside it that copies the formula's LaTeX, since selecting an image copies blank cells; it turns into a `✓` for a moment once copied. A reply that opens with a formula leaves a blank row above it. It needs [RaTeX](https://github.com/erweixin/RaTeX)'s PNG renderer, a single binary that typesets KaTeX syntax in a few milliseconds without TeX, a browser or Node:
+Display math, `$$…$$` on lines of its own or a ` ```math ` block, draws as a typeset image in the formula color (`mathColor`, or the theme's text color), with a dim `⧉` beside it that copies the formula's LaTeX, since selecting an image copies blank cells; it turns into a `✓` for a moment once copied. It needs [RaTeX](https://github.com/erweixin/RaTeX)'s PNG renderer, a single binary that typesets KaTeX syntax in a few milliseconds without TeX, a browser or Node:
 
 ```bash
 gh release download -R erweixin/RaTeX -p 'ratex-cli-*-aarch64-apple-darwin.tar.gz'
