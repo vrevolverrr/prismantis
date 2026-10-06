@@ -1,7 +1,10 @@
-<Box border=bold>
-  <Text color=#0550ae bold>
-    <Text>
-      "prismantis"
+<Box>
+  <Box>
+    <Text color=#0550ae bold>
+      <Text>
+        "prismantis"
+  <Text color=#d0d7de>
+    "────────────────────────────────────────────────────────────────────────────────"
 <Text>
   <Text color=#1f2328 bold>
     <Text>
@@ -35,11 +38,12 @@
   <Text color=#0969da underline>
     "https://github.com/NahumLitvin/prismantis"
 <Box>
-  <Text color=#0550ae bold>
-    <Text>
-      "Roster"
-  <Text color=#0550ae>
-    "━━━━━━"
+  <Box>
+    <Text color=#0550ae bold>
+      <Text>
+        "Roster"
+  <Text color=#d0d7de>
+    "────────────────────────────────────────────────────────────────────────────────"
 <Box>
   <Text color=#6e7781>
     "┌───────────────┬─────────────────────────┬───────────────────────┬───────┐"

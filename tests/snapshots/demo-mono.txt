@@ -1,7 +1,10 @@
-<Box border=bold>
-  <Text bold>
-    <Text>
-      "prismantis"
+<Box>
+  <Box>
+    <Text bold>
+      <Text>
+        "prismantis"
+  <Text>
+    "────────────────────────────────────────────────────────────────────────────────"
 <Text>
   <Text bold>
     <Text>
@@ -35,11 +38,12 @@
   <Text underline>
     "https://github.com/NahumLitvin/prismantis"
 <Box>
-  <Text bold>
-    <Text>
-      "Roster"
+  <Box>
+    <Text bold>
+      <Text>
+        "Roster"
   <Text>
-    "━━━━━━"
+    "────────────────────────────────────────────────────────────────────────────────"
 <Box>
   <Text>
     "┌───────────────┬─────────────────────────┬───────────────────────┬───────┐"

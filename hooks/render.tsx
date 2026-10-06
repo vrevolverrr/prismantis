@@ -206,25 +206,22 @@ const renderTable = (el: ElementTable, style: Style, block: Extract<Block, { kin
   return <Box key={key} flexDirection="column">{body}</Box>
 }
 
-const renderHeading = (el: ElementTable, style: Style, block: Extract<Block, { kind: 'heading' }>, key: string) => {
+const ruleWidth = (columns: number) => Math.max(8, Math.min(columns, 80))
+
+const renderHeading = (el: ElementTable, style: Style, block: Extract<Block, { kind: 'heading' }>, columns: number, key: string) => {
   const { Box, Text } = el
-  const { inline } = block
   const t = style.theme
-  const color = block.level <= 2 ? t.heading : t.accent ?? t.heading
-  const label = inlineText(inline)
-  switch (style.headingStyle) {
-    case 'uppercase':
-      return <Text key={key} bold color={color}>{block.level === 1 ? label.toUpperCase() : label}</Text>
-    case 'underline':
-      return <Text key={key} bold underline={block.level <= 2} color={color}>{label}</Text>
-    case 'banner':
-      if (block.level === 1) return <Box key={key} alignSelf="flex-start" borderStyle="bold" borderColor={color} paddingX={1}><Text bold color={color}>{renderInline(el, style, inline, key)}</Text></Box>
-      return block.level === 2
-        ? <Box key={key} flexDirection="column" alignSelf="flex-start"><Text bold color={color}>{renderInline(el, style, inline, key)}</Text><Text color={color}>{'━'.repeat(width(label))}</Text></Box>
-        : <Text key={key} bold color={block.level === 3 ? color : t.strong}>{renderInline(el, style, inline, key)}</Text>
-    default:
-      return <Text key={key} bold color={color}>{renderInline(el, style, inline, key)}</Text>
-  }
+  const title = renderInline(el, style, block.inline, key)
+  if (block.level > 2) return <Text key={key} bold color={t.strong}>{title}</Text>
+  const rule = ruleWidth(columns)
+  return (
+    <Box key={key} flexDirection="column">
+      <Box paddingLeft={block.level === 1 ? Math.max(0, Math.floor((rule - width(inlineText(block.inline))) / 2)) : 0}>
+        <Text bold color={t.heading}>{title}</Text>
+      </Box>
+      <Text color={t.rule} dimColor={!t.rule}>{'─'.repeat(rule)}</Text>
+    </Box>
+  )
 }
 
 const ALERT_COLOR = { note: 'blue', tip: 'green', important: 'magenta', warning: 'yellow', caution: 'red' } as const
@@ -301,7 +298,7 @@ export const renderBlocks = (el: ElementTable, style: Style, blocks: Block[], co
     const key = `b${b}`
     switch (block.kind) {
       case 'heading':
-        return renderHeading(el, style, block, key)
+        return renderHeading(el, style, block, columns, key)
       case 'paragraph':
         return renderParagraph(el, style, block, key)
       case 'quote':
@@ -309,7 +306,7 @@ export const renderBlocks = (el: ElementTable, style: Style, blocks: Block[], co
       case 'alert':
         return renderAlert(el, style, block, key)
       case 'rule':
-        return <Text key={key} color={t.rule} dimColor={!t.rule}>{'─'.repeat(Math.max(8, Math.min(columns, 80)))}</Text>
+        return <Text key={key} color={t.rule} dimColor={!t.rule}>{'─'.repeat(ruleWidth(columns))}</Text>
       case 'code':
         return drawn.get(b)?.element ?? <el.Markdown key={key} text={block.raw} />
       case 'list':

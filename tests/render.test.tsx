@@ -271,3 +271,19 @@ test('code blocks are left to Claude Code: drawn by its own Markdown element, fe
   expect(await ui.find({ type: 'Text', text: /^── / })).toBeUndefined()
   await ui.unmount()
 })
+
+test('headings take the GitHub look: H1 centered over a full-width rule, H2 over a rule, H3 bold', async $ => {
+  const ui = await $.ui.mount({ ...draw('# Title\n\n## Section\n\n### Detail'), surface: 'terminal' })
+  const t = PRESETS['catppuccin-mocha']
+  const rules = await ui.findAll({ type: 'Text', text: /^─+$/ })
+  expect(rules.map(r => r.text.length)).toEqual([80, 80])
+  expect(rules.every(r => r.props.color === t.rule)).toBe(true)
+  const h1 = (await ui.find({ key: 'b0' }))?.children[0] as { props: Record<string, unknown> }
+  expect(h1.props.paddingLeft).toBe(Math.floor((80 - 'Title'.length) / 2))
+  const h2 = (await ui.find({ key: 'b1' }))?.children[0] as { props: Record<string, unknown> }
+  expect(h2.props.paddingLeft).toBe(0)
+  expect((await ui.find({ type: 'Text', text: /^Section$/ }))?.props.color).toBe(t.heading)
+  const h3 = await ui.find({ type: 'Text', text: /^Detail$/ })
+  expect([h3?.props.bold, h3?.props.color]).toEqual([true, t.strong])
+  await ui.unmount()
+})

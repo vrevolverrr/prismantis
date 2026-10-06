@@ -1,6 +1,6 @@
 {
   "name": "prismantis",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Colorful, themeable rendering for Claude Code replies: tables, headings, code, diagrams, LaTeX math, numbers, paths and links.",
   "author": {
     "name": "Nahum Litvin",
@@ -50,18 +50,6 @@
         "mono"
       ]
     },
-    "headingStyle": {
-      "type": "string",
-      "title": "Heading style",
-      "description": "Terminals have one font size, so headings get weight instead: banner (a box around H1, a heavy rule under H2), bold, underline, or uppercase H1.",
-      "default": "banner",
-      "options": [
-        "bold",
-        "underline",
-        "uppercase",
-        "banner"
-      ]
-    },
     "tableStyle": {
       "type": "string",
       "title": "Table style",
@@ -96,7 +84,7 @@
     "accentColor": {
       "type": "string",
       "title": "Accent",
-      "description": "Color for the reply bullet, H3+ headings and quote bars. Hex (#a6e3a1), rgb(166,227,161), ansi256(114) or a name (green). Empty uses the theme.",
+      "description": "Color for the reply bullet and quote bars. Hex (#a6e3a1), rgb(166,227,161), ansi256(114) or a name (green). Empty uses the theme.",
       "default": ""
     },
     "headingColor": {
@@ -216,7 +204,7 @@
     "ruleColor": {
       "type": "string",
       "title": "Rules",
-      "description": "Color for horizontal rules and heading banners. Hex, rgb(), ansi256() or a name. Empty uses the theme.",
+      "description": "Color for horizontal rules and the rule under H1 and H2 headings. Hex, rgb(), ansi256() or a name. Empty uses the theme.",
       "default": ""
     },
     "bulletColor": {

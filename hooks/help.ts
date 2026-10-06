@@ -59,7 +59,7 @@ Colored markdown for Claude Code replies: **bold**, *italic*, ~~struck~~, \`inli
 ### Code
 
 \`\`\`json
-{ "theme": "dracula", "headingStyle": "banner", "mermaid": true }
+{ "theme": "dracula", "tableStyle": "grid", "mermaid": true }
 \`\`\`
 
 #### Math

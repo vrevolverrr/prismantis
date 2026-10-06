@@ -10,6 +10,7 @@ This is a fork of [NahumLitvin/prismantis](https://github.com/NahumLitvin/prisma
 - the [model note](#diagram-hints) arrives once at session start instead of on every prompt, and has no option
 - [copy buttons](#copy-buttons) are off by default; Claude Code's `/copy` covers whole replies
 - a `github-dark-minimal` [theme](#themes)
+- [headings](#headings-lists-quotes) in GitHub's look, with no `headingStyle` option
 - no right-to-left (Hebrew, Arabic) layout
 
 ![prismantis on the default Catppuccin Mocha theme: a boxed title, a section heading, a table, a nested list, a flowchart, a sequence diagram, a bar chart with values and its tallest bar highlighted, a line chart, highlighted TypeScript and shell blocks, a tip alert and copy buttons](docs/screenshot.png)
@@ -30,7 +31,7 @@ This is a fork of [NahumLitvin/prismantis](https://github.com/NahumLitvin/prisma
 | [Slash commands](#slash-commands) | command output (`/cost`, `/context`, plugin commands) gets the same tables and code styling |
 | [Diagram hints](#diagram-hints) | a short model-only note at session start so Claude reaches for diagrams and charts when they help |
 | [Text](#text) | bold, italic, strikethrough, inline code, links, versions, durations, percentages and paths in their own colors |
-| [Headings, lists, quotes](#headings-lists-quotes) | 4 heading styles, nested lists, task lists, quotes with an accent bar |
+| [Headings, lists, quotes](#headings-lists-quotes) | GitHub-style headings, nested lists, task lists, quotes with an accent bar |
 
 Try it: ask Claude to print [docs/demo.md](docs/demo.md) verbatim as its whole reply. Every feature is in there.
 
@@ -129,7 +130,7 @@ Claude rarely writes a chart unless it knows the terminal can draw one. While `m
 
 ### Headings, lists, quotes
 
-`headingStyle` picks `banner` (the default: a box around H1, a heavy rule under H2), `bold`, `underline` or `uppercase`. Terminals have one font size, so headings stand out through style and color. Lists keep their numbers and nest with `•` and `◦`. Quotes get an accent bar, and GitHub alerts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`) draw as colored boxes. Single-series bar charts print each value above its bar and color the tallest one.
+Terminals have one font size, so headings take GitHub's look instead: H1 and H2 are bold in the heading color over a thin full-width rule, with H1 centered, and H3 and below are bold. Lists keep their numbers and nest with `•` and `◦`. Quotes get an accent bar, and GitHub alerts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`) draw as colored boxes. Single-series bar charts print each value above its bar and color the tallest one.
 
 Task lists draw as `[ ]` and `[✓]`, with done items dimmed and struck through. `taskStyle` switches to `ticks` (`○` `✓`), `box` (`□` `✓`) or `progress`, which adds a done-count bar above each list.
 
@@ -145,7 +146,6 @@ Open `/config` and look for the **prismantis** rows, or set values in `~/.claude
     "prismantis": {
       "theme": "tokyo-night",
       "tableStyle": "grid",
-      "headingStyle": "banner",
       "tableHeaderColor": "#ffcc00",
       "numberColor": "cyan"
     }
@@ -159,7 +159,6 @@ Open `/config` and look for the **prismantis** rows, or set values in `~/.claude
 | `theme` | see [Themes](#themes) | `catppuccin-mocha` |
 | `tableStyle` | `box`, `rules`, `grid`, `minimal` | `box` |
 | `taskStyle` | `checks` (`[ ]` `[✓]`, done struck through), `ticks` (`○` `✓`), `box` (`□` `✓`), `progress` (ticks with a done-count bar) | `checks` |
-| `headingStyle` | `banner`, `bold`, `underline`, `uppercase` | `banner` |
 | `highlightNumbers` | `true`, `false` | `true` |
 | `highlightPaths` | `true`, `false` | `true` |
 | `toolRows` | `true`, `false` | `true` |
@@ -176,7 +175,7 @@ A color is hex (`#a6e3a1`, `#fc0`), `rgb(166,227,161)`, `ansi256(114)` or a name
 
 | Token | Colors |
 | --- | --- |
-| `accent` | reply bullet, H3+ headings, quote bar, running tool dots |
+| `accent` | reply bullet, quote bar, running tool dots |
 | `heading` | H1 and H2 |
 | `strong` | **bold** text |
 | `emphasis` | *italic* text |
@@ -190,7 +189,7 @@ A color is hex (`#a6e3a1`, `#fc0`), `rgb(166,227,161)`, `ansi256(114)` or a name
 | `path` | file paths |
 | `number` | numbers, versions, durations, done dots |
 | `quote` | quote text |
-| `rule` | rules, chart gridlines |
+| `rule` | rules, the line under H1 and H2, chart gridlines |
 | `tableHeader` | table header cells |
 | `tableRule` | table rules |
 | `bullet` | list bullets and numbers |

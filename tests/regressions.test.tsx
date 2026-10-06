@@ -155,13 +155,6 @@ test('a bar chart shows each value, drops label quotes and highlights the talles
   await ui.unmount()
 })
 
-test('H1 gets a box and H2 a heavy rule by default', async $ => {
-  const ui = await $.ui.mount(mount('# Title\n\n## Section'))
-  expect(await ui.find({ type: 'Text', text: /^━+$/ })).toBeDefined()
-  expect(await ui.find({ type: 'Box', text: /Title/ })).toBeDefined()
-  await ui.unmount()
-})
-
 test('chart labels never run together', async $ => {
   const ui = await $.ui.mount(mount('```mermaid\nxychart-beta\n  x-axis [Dog, Human, Pigeon, Shrimp]\n  bar [2, 3, 4, 16]\n```', 120))
   const texts = (await ui.findAll({ type: 'Text' })).map(t => t.text)

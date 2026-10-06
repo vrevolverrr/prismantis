@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.9.4] - 2026-10-06
+
+### Changed
+
+- Headings take GitHub's look: H1 and H2 are bold in the heading color over a thin full-width rule, H1 centered, and H3 and below are bold. The `headingStyle` option and its `banner`, `bold`, `underline` and `uppercase` styles are gone.
+
 ## [0.9.3] - 2026-10-06
 
 ### Changed
