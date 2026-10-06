@@ -74,6 +74,20 @@ test('table columns never exceed the terminal width', async $ => {
   await ui.unmount()
 })
 
+test('a boxed row that wraps keeps its borders on every line', async $ => {
+  const file = 'handoffs/handoff-scheduled-event-pushes-21082026.md'
+  const evidence = 'Its blocking question is unanswered; BACKLOG row 16 cites [it](https://x.io/16)'
+  const ui = await $.ui.mount(mount(`| File | Evidence |\n|---|---|\n| ${file} | ${evidence} |`, 40))
+  const lines = await ui.findAll({ type: 'Text', text: /^│ $/ })
+  const cells = (await ui.findAll({ type: 'Box' })).filter(b => typeof b.props.width === 'number' && b.props.flexShrink === 0).slice(-2 * (lines.length - 1))
+  expect(lines.length > 3).toBe(true)
+  expect(cells.every(b => b.text.length <= (b.props.width as number))).toBe(true)
+  expect(cells.filter((_, i) => i % 2 === 0).map(b => b.text).join('')).toBe(file)
+  expect(cells.filter((_, i) => i % 2 === 1).map(b => b.text).join(' ')).toBe('Its blocking question is unanswered; BACKLOG row 16 cites it (https://x.io/16)')
+  expect((await ui.find({ type: 'Text', text: /^16$/ }))?.props.color).toBe(PRESETS['catppuccin-mocha'].number)
+  await ui.unmount()
+})
+
 test('a link column is sized for the URL it shows', async $ => {
   const url = 'https://example.com/a/rather/long/path'
   const ui = await $.ui.mount(mount(`| link | n |\n|---|---|\n| [go](${url}) | 1 |`))
