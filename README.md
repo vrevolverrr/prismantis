@@ -233,6 +233,7 @@ Open `/config` and look for the **prismantis** rows, or set values in `~/.claude
 | `mermaid` | `true`, `false` | `true` |
 | `mermaidAscii` | `true`, `false` | `false` |
 | `latex` | `true`, `false` | `false` |
+| `formulaCopyIcon` | `true`, `false` | `false` |
 | `<token>Color` | any color, see below | theme |
 
 A color is hex (`#a6e3a1`, `#fc0`), `rgb(166,227,161)`, `ansi256(114)` or a name (`green`, `cyanBright`). Values that don't parse are ignored. Every token has a `<token>Color` option and a row in `/config`:

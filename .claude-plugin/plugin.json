@@ -288,6 +288,12 @@
       "title": "LaTeX math",
       "description": "Draw $$ and ```math formulas as typeset images in kitty and Ghostty (not under tmux) with RaTeX's renderer, installed as ratex-render on your PATH. Off runs nothing. Formulas that can't be drawn stay as text.",
       "default": false
+    },
+    "formulaCopyIcon": {
+      "type": "boolean",
+      "title": "Formula copy icon",
+      "description": "Put a small in-font ◰ beside each typeset formula, halfway down, that copies its LaTeX, in place of the ⧉ copy button. Shows even with copy buttons off.",
+      "default": false
     }
   }
 }

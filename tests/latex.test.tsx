@@ -483,6 +483,37 @@ test('with copy buttons off, a typeset formula has no copy button', { options: {
   await ui.unmount()
 })
 
+test('formulaCopyIcon puts an in-font ◰ halfway down beside each formula, in place of its copy button', { options: { formulaCopyIcon: true } }, async ($, on) => {
+  mock.env(on, KITTY)
+  const clock = mock.clock(on)
+  ratex(on, ok, PNG_800x400)
+  const copied = stubClipboard(on)
+
+  const ui = await $.ui.mount(reply(REPLY))
+  await clock.settle()
+  const buttons = await ui.findAll({ type: 'Button' })
+  const slot = (await ui.findAll({ type: 'Box' })).find(b => b.props.width === 1)
+  await ui.press({ key: String(buttons.find(b => b.props.label === '◰')?.key) })
+
+  expect(buttons.map(b => b.props.label)).toEqual(['◰', '⧉ copy reply'])
+  expect(sizeOf(await ui.find({ type: 'Image' })).rows).toBe(5)
+  expect(slot?.props.marginTop).toBe(2)
+  expect(copied).toEqual(['\\int_0^1 x^2\\,dx'])
+  await ui.unmount()
+})
+
+test('formulaCopyIcon shows its ◰ even with copy buttons off', { options: { formulaCopyIcon: true, copyButtons: false } }, async ($, on) => {
+  mock.env(on, KITTY)
+  const clock = mock.clock(on)
+  ratex(on)
+
+  const ui = await $.ui.mount(reply(REPLY))
+  await clock.settle()
+
+  expect((await ui.findAll({ type: 'Button' })).map(b => b.props.label)).toEqual(['◰'])
+  await ui.unmount()
+})
+
 test('back-to-back formulas stack one per line instead of sharing a row', async ($, on) => {
   mock.env(on, KITTY)
   const clock = mock.clock(on)

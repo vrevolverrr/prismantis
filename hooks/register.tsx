@@ -164,18 +164,19 @@ const mathOfBlocks = async ($: EngineInterface, latex: LatexSession, surface: st
 }
 
 const drawMarkdown = ($: EngineInterface, el: ReturnType<EngineInterface['ui']['resolve']>, style: Style, blocks: ReturnType<typeof parse>, columns: number, math: Map<number, Typeset> = new Map(), reply?: string): RenderElement[] => {
-  const { Button } = el
+  const { Box, Button } = el
+  const copyOut = (text: string, surface: Parameters<EngineInterface['ui']['copy']>[0]['surface']) => {
+    $.ui.copy({ text, surface })
+      .then(r => $.ui.toast(r.isCopied ? 'Copied' : `Copy failed: ${r.reason}`))
+      .catch(() => $.ui.toast('Copy failed'))
+  }
   const copy = (text: string | (() => string), key: string, label = '⧉ copy') =>
     style.copyButtons ? (
       <Button
         key={key}
         variant="primary"
         label={label}
-        onPress={press => {
-          $.ui.copy({ text: typeof text === 'function' ? text() : text, surface: press.surface })
-            .then(r => $.ui.toast(r.isCopied ? 'Copied' : `Copy failed: ${r.reason}`))
-            .catch(() => $.ui.toast('Copy failed'))
-        }}
+        onPress={press => copyOut(typeof text === 'function' ? text() : text, press.surface)}
       />
     ) : null
   const drawn: Drawn = new Map()
@@ -190,7 +191,20 @@ const drawMarkdown = ($: EngineInterface, el: ReturnType<EngineInterface['ui']['
   if (Image) {
     for (const [i, formula] of math) {
       const picked = pickFormula(formula, columns)
-      if (picked) drawn.set(i, { element: <Image key={`b${i}`} source={{ png: picked.picture.png }} columns={picked.fit.columns} rows={picked.fit.rows} alt={formula.tex} /> })
+      const block = blocks[i]
+      if (!picked || block?.kind !== 'code') continue
+      const image = <Image key={style.formulaCopyIcon ? `m${i}` : `b${i}`} source={{ png: picked.picture.png }} columns={picked.fit.columns} rows={picked.fit.rows} alt={formula.tex} />
+      drawn.set(i, style.formulaCopyIcon ? {
+        element: (
+          <Box key={`b${i}`} flexDirection="row" columnGap={1}>
+            {image}
+            <Box key={`slot${i}`} width={1} marginTop={Math.floor((picked.fit.rows - 1) / 2)}>
+              <Button key={`copy${i}`} plain dimColor label="◰" onPress={press => copyOut(block.lines.join('\n'), press.surface)} />
+            </Box>
+          </Box>
+        ),
+        copies: true,
+      } : { element: image })
     }
   }
   const elements = renderBlocks(el, style, blocks, columns, drawn, copy)
