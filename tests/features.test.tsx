@@ -481,3 +481,23 @@ test('toolStyle tree-bold draws one-line narration in bold', { options: { toolSt
   expect((await long.find({ type: 'Text', text: /^First\.$/ }))?.props.bold).toBeFalsy()
   await long.unmount()
 })
+
+const firstMargins = async ($: Parameters<TestBody>[0]) => {
+  const mounts = [
+    await $.ui.mount({ plugin: 'prismantis', surface: 'terminal', component: 'AssistantMessage', props: { text: 'Hi. What do you need?', isFirstOfReply: true }, viewport: { columns: 100, rows: 40 } }),
+    await $.ui.mount({ plugin: 'prismantis', surface: 'terminal', component: 'ToolUse', props: call('Read', { file_path: '/tmp/x' }, 'gap-1') }),
+    await $.ui.mount({ plugin: 'prismantis', surface: 'terminal', component: 'ToolGroup', props: { calls: [call('Bash', { command: 'ls' }, 'gap-2'), call('Read', { file_path: '/tmp/x' }, 'gap-3')], isActive: false, isExpanded: false } }),
+    await $.ui.mount({ plugin: 'prismantis', surface: 'terminal', component: 'TurnDuration', props: { word: 'Crunched', durationMs: 4000 } }),
+  ]
+  const margins = await Promise.all(mounts.map(async ui => (await ui.findAll({ type: 'Box' }))[0]?.props.marginTop ?? 0))
+  for (const ui of mounts) await ui.unmount()
+  return margins
+}
+
+test('replies, tool rows, tool groups and the turn footer keep the blank row Claude Code puts above them', async $ => {
+  expect(await firstMargins($)).toEqual([1, 1, 1, 1])
+})
+
+test('tree tool rows stay tucked under the sentence above them', { options: { toolStyle: 'tree-dim' } }, async $ => {
+  expect(await firstMargins($)).toEqual([1, 0, 0, 1])
+})

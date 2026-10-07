@@ -291,7 +291,7 @@ export const register: Register = (on, options) => {
     const narration = style.toolStyle === 'tree-bold' && blocks.length === 1 && blocks[0]!.kind === 'paragraph'
     const math = await mathOfBlocks($, latex, e.surface, blocks)
     return (
-      <Box flexDirection="row">
+      <Box flexDirection="row" marginTop={1}>
         <Box width={2} flexShrink={0}>
           <Text color={style.theme.accent}>{e.props.isFirstOfReply ? '●' : ' '}</Text>
         </Box>

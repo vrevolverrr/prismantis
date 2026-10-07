@@ -601,12 +601,14 @@ const toolGutter = ({ Box, Text }: ElementTable, style: Style, color: string | u
     ? <Box width={4} flexShrink={0}><Text color={color}>{'  ⎿ '}</Text></Box>
     : <Box width={2} flexShrink={0}><Text color={color}>{running ? '◌' : '●'}</Text></Box>
 
+const toolGap = (style: Style) => (style.toolStyle.startsWith("tree") ? 0 : 1)
+
 const toolLayout = (el: ElementTable, style: Style, columns: number, label: string, color: string | undefined, running: boolean, text: RenderElement) => {
   const { Box, Text } = el
-  if (style.toolStyle !== "chat") return <Box flexDirection="row">{toolGutter(el, style, color, running)}{text}</Box>
+  if (style.toolStyle !== "chat") return <Box marginTop={toolGap(style)} flexDirection="row">{toolGutter(el, style, color, running)}{text}</Box>
   const w = Math.min(width(label) + 2, Math.max(20, Math.floor(columns * 0.6)))
   return (
-    <Box flexDirection="row" justifyContent="flex-end" width="100%">
+    <Box marginTop={1} flexDirection="row" justifyContent="flex-end" width="100%">
       <Box width={w} flexDirection="row">{text}<Text color={color}>{running ? " ◌" : " ●"}</Text></Box>
     </Box>
   )
@@ -649,7 +651,7 @@ export const renderExpandedShell = (el: ElementTable, style: Style, row: ToolRow
   const visible = shown.slice(0, OUTPUT_LINES)
   const dot = row.isErrored ? t.codeFlag : row.isInterrupted ? t.codeComment : row.isRunning ? t.accent : t.number
   return (
-    <Box flexDirection="column">
+    <Box marginTop={toolGap(style)} flexDirection="column">
       <Box flexDirection="row">
         <Box width={2} flexShrink={0}>
           <Text color={dot}>{row.isRunning ? '◌' : '●'}</Text>
@@ -726,11 +728,13 @@ export const formatDuration = (ms: number): string => {
   return `${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m`
 }
 
-export const renderTurnDuration = ({ Text }: ElementTable, style: Style, word: string, durationMs: number): RenderElement => (
-  <Text color={style.theme.codeComment}>
-    {`✻ ${word} for `}
-    <Text color={style.theme.number}>{formatDuration(durationMs)}</Text>
-  </Text>
+export const renderTurnDuration = ({ Box, Text }: ElementTable, style: Style, word: string, durationMs: number): RenderElement => (
+  <Box marginTop={1}>
+    <Text color={style.theme.codeComment}>
+      {`✻ ${word} for `}
+      <Text color={style.theme.number}>{formatDuration(durationMs)}</Text>
+    </Text>
+  </Box>
 )
 
 export const renderUserPrompt = (el: ElementTable, style: Style, text: string, columns: number): RenderElement => {
