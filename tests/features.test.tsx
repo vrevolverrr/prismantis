@@ -509,3 +509,30 @@ test('nativeCodeBlocks leaves code blocks to Claude Code as written, and mermaid
   expect(native).toEqual(['```ts\nconst x = 1\n```'])
   await ui.unmount()
 })
+
+for (const promptStyle of ['bubble', 'bar', 'chevron'] as const) {
+  test(`a ${promptStyle} prompt keeps a blank row above it, after the last turn's footer`, { options: { promptStyle } }, async $ => {
+    const ui = await $.ui.mount(prompt('how many frog raids?'))
+
+    const margin = (await ui.findAll({ type: 'Box' }))[0]?.props.marginTop
+
+    expect(margin).toBe(1)
+    await ui.unmount()
+  })
+}
+
+test('an expanded shell row keeps its blank row in the tree styles, so it does not run into the prompt above', { options: { toolStyle: 'tree-dim' } }, async ($, on) => {
+  engine(on)
+  await expand($, 'gap-shell')
+  const row = await $.ui.mount({
+    plugin: 'prismantis',
+    surface: 'terminal',
+    component: 'ToolUse',
+    props: { ...call('Bash', { command: 'echo hi' }, 'gap-shell'), output: { stdout: 'hi\n', stderr: '' } },
+  })
+
+  const margin = (await row.findAll({ type: 'Box' }))[0]?.props.marginTop
+
+  expect(margin).toBe(1)
+  await row.unmount()
+})

@@ -651,7 +651,7 @@ export const renderExpandedShell = (el: ElementTable, style: Style, row: ToolRow
   const visible = shown.slice(0, OUTPUT_LINES)
   const dot = row.isErrored ? t.codeFlag : row.isInterrupted ? t.codeComment : row.isRunning ? t.accent : t.number
   return (
-    <Box marginTop={toolGap(style)} flexDirection="column">
+    <Box marginTop={1} flexDirection="column">
       <Box flexDirection="row">
         <Box width={2} flexShrink={0}>
           <Text color={dot}>{row.isRunning ? '◌' : '●'}</Text>
@@ -752,8 +752,8 @@ export const renderUserPrompt = (el: ElementTable, style: Style, text: string, c
     </Box>
   )
   if (style.promptStyle === 'bubble') {
-    return <Box borderStyle="round" borderColor={t.accent} paddingX={1} alignSelf={rtl ? 'flex-end' : 'flex-start'}>{body}</Box>
+    return <Box marginTop={1} borderStyle="round" borderColor={t.accent} paddingX={1} alignSelf={rtl ? 'flex-end' : 'flex-start'}>{body}</Box>
   }
   const mark = <Text color={t.accent} bold>{style.promptStyle === 'bar' ? (rtl ? ' ▐' : '▌ ') : rtl ? ' ‹' : '› '}</Text>
-  return <Box flexDirection="row" {...(rtl ? { justifyContent: 'flex-end' as const } : {})}>{rtl ? body : mark}{rtl ? mark : body}</Box>
+  return <Box marginTop={1} flexDirection="row" {...(rtl ? { justifyContent: 'flex-end' as const } : {})}>{rtl ? body : mark}{rtl ? mark : body}</Box>
 }
