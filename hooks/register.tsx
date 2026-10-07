@@ -258,10 +258,14 @@ export const register: Register = (on, options) => {
 
   on('prompt.submit', async ($, e, next) => {
     await applyRtl($, style)
-    if (!style.diagramHints || (e.origin.kind !== 'composer' && e.origin.kind !== 'bridge')) return next(e)
-    void latexEngine($, latex)
-    const hints = latex.ready && !latex.stopped ? [HINT, LATEX_HINT] : [HINT]
-    return next({ ...e, context: [...(e.context ?? []), ...hints] })
+    return next(e)
+  })
+
+  on('classic.SessionStart', async ($, e, next) => {
+    const result = await next(e)
+    if (!style.diagramHints) return result
+    const hints = (await latexEngine($, latex)) && !latex.stopped ? [HINT, LATEX_HINT] : [HINT]
+    return { ...result, additionalContext: [...(result.additionalContext ?? []), ...hints] }
   })
 
   on('ui.render', { component: 'CommandOutput' }, async ($, e, next) => {

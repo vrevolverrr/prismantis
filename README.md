@@ -25,7 +25,7 @@ Colorful, themeable replies for [Claude Code](https://claude.com/claude-code): t
 | [Turn footer](#turn-footer) | `✻ Baked for 6m 20s` with the duration in the number color |
 | [Slash commands](#slash-commands) | command output (`/cost`, `/context`, plugin commands) gets the same tables and code styling |
 | [Other mods](#other-mods) | `$.prismantis.markdown` draws any markdown the way replies are drawn, for another mod's pane or band |
-| [Diagram hints](#diagram-hints) | a short model-only note on each prompt so Claude reaches for diagrams and charts when they help |
+| [Diagram hints](#diagram-hints) | a short model-only note at session start so Claude reaches for diagrams and charts when they help |
 | [Text](#text) | bold, italic, strikethrough, inline code, links, versions, durations, percentages and paths in their own colors |
 | [Headings, lists, quotes](#headings-lists-quotes) | 4 heading styles, nested lists, task lists, quotes with an accent bar |
 | [Your prompts](#your-prompts) | what you type draws in a rounded bubble, an accent bar or a chevron, so you can find your turns when you scroll back |
@@ -51,7 +51,7 @@ For LaTeX math, install RaTeX's renderer and set `latex` to `true`; see [LaTeX m
 
 Tested in the terminal on macOS; CI runs the tests on macOS, Linux and Windows. The desktop app, VS Code and mobile should work through the same mod API but have not been checked by hand yet. Turn it off any time in `/plugin`, and Claude Code's own renderer comes back. Press ctrl+o on a reply to see the original.
 
-It's a [Claude Code mod](https://claude.com/blog/claude-code-mods) in plain TypeScript. It bundles two MIT libraries, [beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid) for diagrams and [Prism](https://github.com/PrismJS/prism) for highlighting. It makes no network calls. The one program it runs is the optional RaTeX renderer for [LaTeX math](#latex-math), and the only files it reads are the images that renderer writes into a `prismantis-latex-<session id>-<random suffix>` folder in your temp directory, which stays there; with `latex` off (the default) neither happens. It redraws text already on your screen and, with `diagramHints` on, attaches a short model-only note to your prompts.
+It's a [Claude Code mod](https://claude.com/blog/claude-code-mods) in plain TypeScript. It bundles two MIT libraries, [beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid) for diagrams and [Prism](https://github.com/PrismJS/prism) for highlighting. It makes no network calls. The one program it runs is the optional RaTeX renderer for [LaTeX math](#latex-math), and the only files it reads are the images that renderer writes into a `prismantis-latex-<session id>-<random suffix>` folder in your temp directory, which stays there; with `latex` off (the default) neither happens. It redraws text already on your screen and, with `diagramHints` on, hands the model a short note when a session starts.
 
 ### Themes
 
@@ -168,7 +168,7 @@ declare module 'claude-code' {
 
 ### Diagram hints
 
-Claude rarely writes a chart unless it knows the terminal can draw one. With `diagramHints` on (the default), prismantis attaches a short note to each prompt you type, read by the model and never shown, saying tables, alerts, code, mermaid diagrams and `xychart-beta` charts render here and to use one when a numeric series or a flow is easier to see than read. It also asks for commands in fenced blocks, since only those get a copy button. It costs about 190 tokens per prompt, and about 60 more while [LaTeX math](#latex-math) is on, when it also says `$$` formulas render. It's off whenever `mermaid` is off, and skipped for headless `claude -p` runs and background notifications. Claude Code doesn't let installed plugins edit the system prompt (its built-in `sec-default` policy keeps that for the organization), so the note rides along with your prompt instead.
+Claude rarely writes a chart unless it knows the terminal can draw one. With `diagramHints` on (the default), prismantis hands the model a short note when a session starts, and again after `/clear`, a resume or a compaction, never shown, saying tables, alerts, code, mermaid diagrams and `xychart-beta` charts render here and to use one when a numeric series or a flow is easier to see than read. It also asks for commands in fenced blocks, since only those get a copy button. It costs about 190 tokens, once, not on every prompt, and about 60 more while [LaTeX math](#latex-math) is on, when it also says `$$` formulas render. It's off whenever `mermaid` is off. Claude Code doesn't let installed plugins edit the system prompt (its built-in `sec-default` policy keeps that for the organization), so the note arrives as `SessionStart` hook context instead.
 
 ### Text
 

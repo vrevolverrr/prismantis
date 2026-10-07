@@ -132,27 +132,23 @@ test('slash command output renders as markdown, errors stay native', async ($, o
   await bad.unmount()
 })
 
-test('your prompts carry the render hint as model-only context', async ($, on) => {
-  const seen: (readonly string[] | undefined)[] = []
+test('the render hint reaches the model once, as session start context', async ($, on) => {
   mock.env(on, {})
-  on('prompt.submit', (_, e) => {
-    seen.push(e.context)
-    return { text: e.text, context: e.context }
-  })
-  await $.prompt.submit({ text: 'show me deploys per day', wait: false, origin: { kind: 'composer' } })
-  expect(seen[0]?.some(c => c.includes('prismantis'))).toBe(true)
-  expect(seen[0]?.some(c => c.includes('fenced block') && c.includes('copy button'))).toBe(true)
+  on('classic.SessionStart', () => ({}))
+
+  const started = await $.classic.SessionStart({ source: 'startup' })
+
+  expect(started.additionalContext?.some(c => c.includes('prismantis'))).toBe(true)
+  expect(started.additionalContext?.some(c => c.includes('fenced block') && c.includes('copy button'))).toBe(true)
 })
 
 test('no render hint when diagramHints is off', { options: { diagramHints: false } }, async ($, on) => {
-  const seen: (readonly string[] | undefined)[] = []
   mock.env(on, {})
-  on('prompt.submit', (_, e) => {
-    seen.push(e.context)
-    return { text: e.text, context: e.context }
-  })
-  await $.prompt.submit({ text: 'hi', wait: false, origin: { kind: 'composer' } })
-  expect((seen[0] ?? []).some(c => c.includes('prismantis'))).toBe(false)
+  on('classic.SessionStart', () => ({}))
+
+  const started = await $.classic.SessionStart({ source: 'startup' })
+
+  expect((started.additionalContext ?? []).some(c => c.includes('prismantis'))).toBe(false)
 })
 
 test('a continuation line joins the list item it is indented under', async () => {
@@ -270,14 +266,16 @@ test('a full reply draws every element itself, with the right copy buttons', asy
   await ui.unmount()
 })
 
-test('headless runs get no render hint', async ($, on) => {
+test('prompts carry no render hint, since session start already gave it', async ($, on) => {
   const seen: (readonly string[] | undefined)[] = []
   mock.env(on, {})
   on('prompt.submit', (_, e) => {
     seen.push(e.context)
     return { text: e.text, context: e.context }
   })
-  await $.prompt.submit({ text: 'hi', wait: false, origin: { kind: 'sdk' } })
+
+  await $.prompt.submit({ text: 'show me deploys per day', wait: false, origin: { kind: 'composer' } })
+
   expect((seen[0] ?? []).some(c => c.includes('prismantis'))).toBe(false)
 })
 

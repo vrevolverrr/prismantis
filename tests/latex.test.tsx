@@ -1,5 +1,6 @@
 import type { On } from 'claude-code'
 import { expect, mock, test as base } from 'claude-code/testing'
+import type { TestBody } from 'claude-code/testing'
 
 import { keepFormulas, padFor } from '../hooks/latex'
 import { parse } from '../hooks/markdown'
@@ -51,14 +52,7 @@ const reply = (text: string, columns = 120) => ({
   surface: 'terminal' as const,
 })
 
-const hints = (on: On) => {
-  const seen: (readonly string[] | undefined)[] = []
-  on('prompt.submit', (_, e) => {
-    seen.push(e.context)
-    return { text: e.text, context: e.context }
-  })
-  return seen
-}
+const sessionNotes = async ($: Parameters<TestBody>[0]) => (await $.classic.SessionStart({ source: 'startup' })).additionalContext ?? []
 
 const parsed = (text: string) => parse(text, { numbers: false, paths: false })
 
@@ -133,49 +127,27 @@ test('without the renderer installed, math stays text and no LaTeX hint is sent'
   const clock = mock.clock(on)
   on('session.surfaces', () => ({ value: ['terminal'] as const }))
   on('process.run', () => ({ deny: 'spawn ratex-render ENOENT' }))
-  const seen = hints(on)
+  on('classic.SessionStart', () => ({}))
 
   const ui = await $.ui.mount(reply(REPLY))
   await clock.settle()
-  await $.prompt.submit({ text: 'integrate x squared', wait: false, origin: { kind: 'composer' } })
+  const notes = await sessionNotes($)
 
   expect(await ui.find({ type: 'Image' })).toBeUndefined()
   expect(await ui.find({ type: 'Text', text: /^\\int_0\^1 x\^2\\,dx$/ })).toBeDefined()
-  expect(seen[0]?.some(c => c.includes('prismantis'))).toBe(true)
-  expect(seen[0]?.some(c => c.includes('$$'))).toBe(false)
+  expect(notes.some(c => c.includes('prismantis'))).toBe(true)
+  expect(notes.some(c => c.includes('$$'))).toBe(false)
   await ui.unmount()
 })
 
-test('the prompt hint says display math renders when the renderer works', async ($, on) => {
+test('the session start note says display math renders when the renderer works', async ($, on) => {
   mock.env(on, KITTY)
-  const clock = mock.clock(on)
   ratex(on)
-  on('session.start', () => ({ cwd: '/tmp' }))
-  const seen = hints(on)
+  on('classic.SessionStart', () => ({}))
 
-  await $.session.start({ cwd: '/tmp', surface: 'terminal', isInteractive: true })
-  await clock.settle()
-  await $.prompt.submit({ text: 'integrate x squared', wait: false, origin: { kind: 'composer' } })
+  const notes = await sessionNotes($)
 
-  expect(seen[0]?.some(c => c.includes('$$') && c.includes('LaTeX'))).toBe(true)
-})
-
-test('a prompt sent while the renderer check is still running is not held up and carries no LaTeX hint', async ($, on) => {
-  mock.env(on, KITTY)
-  const clock = mock.clock(on)
-  let release = () => {}
-  const held = new Promise<void>(resolve => (release = resolve))
-  ratex(on, ok, PNG_160x80, held)
-  on('session.start', () => ({ cwd: '/tmp' }))
-  const seen = hints(on)
-
-  await $.session.start({ cwd: '/tmp', surface: 'terminal', isInteractive: true })
-  await $.prompt.submit({ text: 'integrate x squared', wait: false, origin: { kind: 'composer' } })
-
-  expect(seen).toHaveLength(1)
-  expect(seen[0]?.some(c => c.includes('$$'))).toBe(false)
-  release()
-  await clock.settle()
+  expect(notes.some(c => c.includes('$$') && c.includes('LaTeX'))).toBe(true)
 })
 
 test('after the renderer fails once, later formulas stay text and it is not run again', async ($, on) => {
