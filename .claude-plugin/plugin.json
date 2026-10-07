@@ -271,6 +271,12 @@
       "description": "Put a copy button on code blocks, tables, diagrams, lists and quotes. Reach them with ctrl+x tab then Enter, or click where the terminal passes clicks through.",
       "default": true
     },
+    "nativeCodeBlocks": {
+      "type": "boolean",
+      "title": "Native code blocks",
+      "description": "Leave fenced code blocks to Claude Code's own renderer, so they look and highlight exactly as without the mod. Mermaid diagrams and typeset formulas still draw.",
+      "default": false
+    },
     "diagramHints": {
       "type": "boolean",
       "title": "Diagram hints",

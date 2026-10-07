@@ -24,6 +24,7 @@ export type Style = {
   mermaid: boolean
   mermaidAscii: boolean
   copyButtons: boolean
+  nativeCode: boolean
   diagramHints: boolean
   rtl: 'auto' | Terminal | 'off'
   reorder: boolean
@@ -58,6 +59,7 @@ export const resolveStyle = (options: PluginOptions): Style => {
     mermaid: options.mermaid !== false,
     mermaidAscii: options.mermaidAscii === true,
     copyButtons: options.copyButtons !== false,
+    nativeCode: options.nativeCodeBlocks === true,
     diagramHints: options.diagramHints !== false && options.mermaid !== false,
     rtl,
     reorder: rtl !== 'auto' && rtl !== 'off',

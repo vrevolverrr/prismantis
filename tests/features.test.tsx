@@ -499,3 +499,13 @@ test('replies, tool rows, tool groups and the turn footer keep the blank row Cla
 test('tree tool rows stay tucked under the sentence above them', { options: { toolStyle: 'tree-dim' } }, async $ => {
   expect(await firstMargins($)).toEqual([1, 0, 0, 1])
 })
+
+test('nativeCodeBlocks leaves code blocks to Claude Code as written, and mermaid still draws', { options: { nativeCodeBlocks: true } }, async $ => {
+  const text = 'Run:\n\n```ts\nconst x = 1\n```\n\n```mermaid\ngraph LR\n  A --> B\n```'
+  const ui = await $.ui.mount({ plugin: 'prismantis', surface: 'terminal', component: 'AssistantMessage', props: { text, isFirstOfReply: true }, viewport: { columns: 100, rows: 40 } })
+
+  const native = (await ui.findAll({ type: 'Markdown' })).map(m => m.props.text)
+
+  expect(native).toEqual(['```ts\nconst x = 1\n```'])
+  await ui.unmount()
+})

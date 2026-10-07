@@ -227,6 +227,7 @@ Open `/config` and look for the **prismantis** rows, or set values in `~/.claude
 | `toolRows` | `true`, `false` | `true` |
 | `toolStyle` | `chat`, `tree-dim`, `tree-bold`, `classic` | `chat` |
 | `copyButtons` | `true`, `false` | `true` |
+| `nativeCodeBlocks` | `true`, `false` | `false` |
 | `diagramHints` | `true`, `false` | `true` |
 | `rtl` | `auto`, a terminal (`warp`, `kitty`, `apple-terminal`, `iterm`, `ghostty`, `wezterm`, `vscode`, `alacritty`, `windows-terminal`, `gnome`, `konsole`), `off` | `auto` |
 | `mermaid` | `true`, `false` | `true` |
