@@ -38,7 +38,7 @@ Try it: ask Claude to print [docs/demo.md](docs/demo.md) verbatim as its whole r
 Requires Claude Code **2.1.287** or later.
 
 ```
-/plugin marketplace add NahumLitvin/prismantis
+/plugin marketplace add vrevolverrr/prismantis
 ```
 
 ```
@@ -271,7 +271,7 @@ Planned features are on the [roadmap board](https://github.com/users/NahumLitvin
 ## Develop
 
 ```
-git clone https://github.com/NahumLitvin/prismantis
+git clone https://github.com/vrevolverrr/prismantis
 claude --plugin-dir ./prismantis
 ```
 
@@ -279,7 +279,7 @@ Edits hot-reload in that session. Before a PR run `claude plugin validate .` and
 
 ## Author
 
-Built by [Nahum Litvin](https://github.com/NahumLitvin), who writes about running untrusted code in production at [catchkill9.dev](https://www.catchkill9.dev/).
+Built by [Nahum Litvin](https://github.com/NahumLitvin), who writes about running untrusted code in production at [catchkill9.dev](https://www.catchkill9.dev/). This fork is maintained by [vrevolverrr](https://github.com/vrevolverrr).
 
 ## License
 
