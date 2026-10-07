@@ -81,7 +81,7 @@ Code blocks tagged `mermaid` draw as colored text art:
 - each box and participant gets its own theme color, the same at both ends of a sequence diagram
 - each bar gets its own color, gridlines stay dim, axis numbers use the number color
 
-Diagrams too wide for the window, or over 80 lines, stay as code. `mermaidAscii` swaps box-drawing characters for `+ - |`. Pie charts are not supported.
+A flowchart too wide for the window is drawn top-down instead (`LR` becomes `TD`, `RL` becomes `BT`), then with its node labels wrapped at word breaks. Diagrams that still don't fit, or run over 80 lines, stay as code. `mermaidAscii` swaps box-drawing characters for `+ - |`. Pie charts are not supported.
 
 ### LaTeX math
 

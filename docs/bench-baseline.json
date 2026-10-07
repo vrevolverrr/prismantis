@@ -1,6 +1,6 @@
 {
   "parse, demo (cold)": 0.00447,
-  "mermaid layout, demo diagrams (cold)": 0.03801,
+  "mermaid layout, demo diagrams (cold)": 0.0699,
   "mermaid paint, demo diagrams": 0.00277,
   "full reply, demo (cold)": 0.09595,
   "full reply, demo (warm)": 0.056,

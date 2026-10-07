@@ -8,6 +8,14 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - LaTeX math: `$$…$$` and ` ```math ` formulas draw as typeset images in kitty and Ghostty through [RaTeX](https://github.com/erweixin/RaTeX)'s renderer, sized to the reply text and padded to whole rows, with a copy button for the LaTeX. Off by default: the `latex` option turns it on, and `ratex-render` must be on your `PATH`. Without the renderer or in other terminals they stay text in a `math` code block. New option `latex` ([#43](https://github.com/NahumLitvin/prismantis/issues/43)).
 
+### Changed
+
+- A flowchart too wide for the window no longer falls straight back to its source: it is drawn top-down (`LR` becomes `TD`, `RL` becomes `BT`), then with its node labels wrapped at word breaks, and stays as code only if neither fits. Edge labels stay whole, since the layout drops an arrow whose label breaks.
+
+### Fixed
+
+- A chart that opens with a `%%` comment is sized to the terminal width like any other chart.
+
 ## [0.12.0] - 2026-10-07
 
 ### Fixed

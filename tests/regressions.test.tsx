@@ -174,10 +174,53 @@ test('edge labels with spaces keep the line out of their gaps', async $ => {
   await ui.unmount()
 })
 
+test('a flowchart too wide for the window is redrawn top-down', async $ => {
+  const ui = await $.ui.mount(mount('```mermaid\ngraph LR\n  A[Checkout] --> B[Payments] --> C[Ledger] --> D[Warehouse] --> E[Courier]\n```', 50))
+  expect(await ui.find({ type: 'Markdown' })).toBeUndefined()
+  const rows = (await ui.findAll({ type: 'Text' })).map(t => t.text)
+  expect(rows.some(r => r.includes('Checkout') && r.includes('Payments'))).toBe(false)
+  expect(await ui.find({ type: 'Text', text: /^Courier$/ })).toBeDefined()
+  await ui.unmount()
+})
+
+test('node labels wrap at word breaks when top-down is still too wide', async $ => {
+  const ui = await $.ui.mount(mount('```mermaid\ngraph LR\n  A[Receive the webhook from the payment provider] --> B[Store it]\n```', 34))
+  expect(await ui.find({ type: 'Markdown' })).toBeUndefined()
+  expect(await ui.find({ type: 'Text', text: /^│ payment provider │$/ })).toBeDefined()
+  await ui.unmount()
+})
+
+test('wrapping node labels leaves edge labels whole, parentheses and all', async $ => {
+  const ui = await $.ui.mount(mount('```mermaid\ngraph LR\n  A[Receive the webhook from the payment provider] -->|save(the whole document)| B[Store it]\n```', 40))
+  expect(await ui.find({ type: 'Text', text: /^│ +payment provider +│$/ })).toBeDefined()
+
+  const rows = (await ui.findAll({ type: 'Text' })).map(t => t.text)
+
+  expect(rows.some(r => r.includes('save(the whole document)'))).toBe(true)
+  expect(rows.some(r => r.trim() === '▼')).toBe(true)
+  await ui.unmount()
+})
+
 test('a chart that opens with a %% comment still draws', async $ => {
   const ui = await $.ui.mount(mount('```mermaid\n%% weekly deploys\nxychart-beta\n  x-axis [a, b]\n  bar [1, 2]\n```', 160))
   expect((await ui.findAll({ type: 'Text' })).some(t => /^█+$/.test(t.text))).toBe(true)
   await ui.unmount()
+})
+
+test('a chart that opens with a %% comment draws the same as one without', async $ => {
+  const chart = 'xychart-beta\n  x-axis [a, b]\n  bar [1, 2]'
+  const rows = async (source: string) => {
+    const ui = await $.ui.mount(mount('```mermaid\n' + source + '\n```', 60))
+    const texts = (await ui.findAll({ type: 'Text' })).map(t => t.text)
+    await ui.unmount()
+    return texts
+  }
+
+  const commented = await rows('%% weekly deploys\n' + chart)
+  const plain = await rows(chart)
+
+  expect(plain.some(t => /^█+$/.test(t))).toBe(true)
+  expect(commented).toEqual(plain)
 })
 
 test('a GitHub alert draws its title and body, and copies without the > markers', async ($, on) => {

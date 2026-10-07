@@ -1,11 +1,12 @@
 import type { ElementTable, RenderElement } from 'claude-code'
 
-import { remember } from './render'
+import { remember, width } from './render'
 import type { Style } from './theme'
 import { renderMermaidAscii, setChartSize } from './vendor/mermaid-text.js'
 
 const MAX_LINES = 80
 const textCache = new Map<string, string | null>()
+const fitCache = new Map<string, string | null>()
 
 export const chartSize = (columns: number, source = '') => {
   const labels = (/^\s*x-axis\b[^[\n]*\[([^\]\n]*)\]/m.exec(source)?.[1] ?? '').split(',').map(s => s.trim().replace(/^"|"$/g, ''))
@@ -39,19 +40,53 @@ const labelBars = (art: string, source: string): string => {
   return grid.map(row => row.join('').trimEnd()).join('\n')
 }
 
-export const mermaidText =(source: string, ascii: boolean, columns: number): string | null => {
-  if (source.length > 8000 || source.split('\n').length > MAX_LINES) return null
-  const isChart = /^\s*xychart/.test(source)
-  const size = chartSize(columns, isChart ? source : '')
-  const key = `${ascii}:${isChart ? size.width : 0}:${source}`
-  return remember(textCache, key, () => {
+const LABEL_WIDTH = 16
+const SHAPES = [['([', '])'], ['[[', ']]'], ['[(', ')]'], ['((', '))'], ['{{', '}}'], ['[', ']'], ['(', ')'], ['{', '}']] as const
+const literal = (s: string) => s.replace(/[[\](){}]/g, '\\$&')
+const NODE_LABEL = new RegExp(`(?<=[\\w-])(?:${SHAPES.map(([open, close]) => `${literal(open)}.+?${literal(close)}`).join('|')})`, 'g')
+
+const wrapLabel = (label: string) =>
+  label.split(/<br\s*\/?>/i).map(part => part.split(' ').reduce<string[]>((lines, word) => {
+    const last = lines.at(-1)
+    return last !== undefined && width(`${last} ${word}`) <= LABEL_WIDTH ? [...lines.slice(0, -1), `${last} ${word}`] : [...lines, word]
+  }, []).join('<br/>')).join('<br/>')
+
+const wrapLabels = (source: string) =>
+  source.split(/(\|[^|\n]*\|)/).map((part, i) => i % 2 ? part : part.replace(NODE_LABEL, node => {
+    const [open, close] = SHAPES.find(([o, c]) => node.startsWith(o) && node.endsWith(c))!
+    return open + wrapLabel(node.slice(open.length, -close.length)) + close
+  })).join('')
+
+function* narrower(source: string) {
+  yield source
+  if (!/^\s*(graph|flowchart)\b/i.test(source)) return
+  const flipped = source.replace(/^(\s*(?:graph|flowchart)\s+)(LR|RL)\b/i, (_, head: string, dir: string) => head + (dir.toUpperCase() === 'LR' ? 'TD' : 'BT'))
+  if (flipped !== source) yield flipped
+  const wrapped = wrapLabels(flipped)
+  if (wrapped !== flipped) yield wrapped
+}
+
+const draw = (source: string, ascii: boolean, chart: { width: number; height: number } | null) =>
+  remember(textCache, `${ascii}:${chart?.width ?? 0}:${source}`, () => {
     try {
-      if (isChart) setChartSize(size.width, size.height)
-      const art = renderMermaidAscii(unquoteCategories(source.replace(/^(\s*%%[^\n]*\n)+/, '')).replace(/(-->|-\.->|==>|---|-\.-|===)[ \t]+\|/g, '$1|'), { useAscii: ascii, colorMode: 'none', paddingX: 3, paddingY: 1 }).replace(/[ \t]+$/gm, '').trimEnd().replace(/▶/g, '►').replace(/◀/g, '◄')
-      return isChart ? labelBars(art, source) : art.split('\n').filter(l => !/^[\s│|]*$/.test(l)).join('\n')
+      if (chart) setChartSize(chart.width, chart.height)
+      const art = renderMermaidAscii(unquoteCategories(source).replace(/(-->|-\.->|==>|---|-\.-|===)[ \t]+\|/g, '$1|'), { useAscii: ascii, colorMode: 'none', paddingX: 3, paddingY: 1 }).replace(/[ \t]+$/gm, '').trimEnd().replace(/▶/g, '►').replace(/◀/g, '◄')
+      return chart ? labelBars(art, source) : art.split('\n').filter(l => !/^[\s│|]*$/.test(l)).join('\n')
     } catch {
       return null
     }
+  })
+
+export const mermaidText = (source: string, ascii: boolean, columns: number): string | null => {
+  if (source.length > 8000 || source.split('\n').length > MAX_LINES) return null
+  return remember(fitCache, `${ascii}:${columns}:${source}`, () => {
+    const body = source.replace(/^(\s*%%[^\n]*\n)+/, '')
+    const chart = /^\s*xychart/.test(body) ? chartSize(columns, body) : null
+    for (const candidate of chart ? [body] : narrower(body)) {
+      const art = draw(candidate, ascii, chart)
+      if (art !== null && art.split('\n').every(l => width(l) <= columns - 2)) return art
+    }
+    return null
   })
 }
 

@@ -184,7 +184,7 @@ const drawMarkdown = ($: EngineInterface, el: ReturnType<EngineInterface['ui']['
     for (const [i, block] of blocks.entries()) {
       if (block.kind !== 'code' || block.lang.toLowerCase() !== 'mermaid') continue
       const art = mermaidText(block.lines.join('\n'), style.mermaidAscii, columns)
-      if (art !== null && art.split('\n').every(l => width(l) <= columns - 2)) drawn.set(i, { element: boxArt(el, style, art, `b${i}`), art })
+      if (art !== null) drawn.set(i, { element: boxArt(el, style, art, `b${i}`), art })
     }
   }
   const Image = 'Image' in el ? el.Image : null
