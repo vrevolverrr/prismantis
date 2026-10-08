@@ -88,3 +88,20 @@ Test-kit gotchas:
 | `.claude/skills/add-theme` | adding or renaming a color preset |
 | `.claude/skills/live-check` | seeing a change render in a real session |
 | `.claude/skills/release` | cutting a version |
+
+## This fork
+
+This checkout is vrevolverrr/prismantis, a fork of NahumLitvin/prismantis (`upstream`). Everything above still applies to upstream PRs; this section covers the fork itself.
+
+| Branch | What |
+| --- | --- |
+| `main` | mirrors `upstream/main`, fast-forward only; never commit to it |
+| `fork` | the default branch and what gets installed: `main`, then open upstream PR commits, `fork:` commits, upstream-PR candidates, and one `fork: x.y.z` version commit on top |
+| `feature/…`, `fix/…` | upstream PRs, cut from `main`, never from `fork` |
+
+- Fork-only behavior is an option that defaults to off and is turned on in the person's settings, so upstream code and tests stay as they are and rebases stay clean. Commit it on `fork` as `fork: …`, below the version commit.
+- The version commit is the fork's release commit and the only one that sets the version: `plugin.json`, `marketplace.json` and the fork section of `docs/CHANGELOG.md`, all to the next patch above both the last fork version and upstream's.
+- When upstream moves, fast-forward `main`, rebase `fork` onto it and redo the version commit. A PR squash-merged upstream drops out with `git rebase --onto main <PR branch> fork`.
+- When a PR branch changes, `git rebase --onto <PR branch> <its old tip> fork`, then redo the version commit.
+- The installed copy only moves when the version goes up. After pushing `fork` with `--force-with-lease`, run `claude plugin marketplace update prismantis && claude plugin update prismantis@prismantis`, then `/reload-plugins`.
+- Never run `claude plugin marketplace remove prismantis`: it deletes the plugin's saved options from settings.json.
