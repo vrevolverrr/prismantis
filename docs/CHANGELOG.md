@@ -16,6 +16,21 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - A chart that opens with a `%%` comment is sized to the terminal width like any other chart.
 
+## [0.12.1] - 2026-10-08
+
+Fork release: upstream 0.12.0 plus the LaTeX PR (#50) and the too-wide flowchart fallback, both listed under Unreleased above, and these changes.
+
+### Added
+
+- `nativeCodeBlocks` leaves fenced code blocks to Claude Code's own renderer. Mermaid diagrams and typeset formulas still draw.
+- `formulaCopyIcon` puts an in-font ◰ beside each typeset formula, halfway down, that copies its LaTeX, in place of the ⧉ copy button.
+
+### Changed
+
+- The model note arrives once, as `SessionStart` context (again after `/clear`, a resume or a compaction), instead of on every prompt.
+- Replies, tool rows, tool groups and the turn footer keep the blank row Claude Code puts above them. Tree-style tool rows stay tucked under their sentence.
+- A prompt drawn by the mod keeps a blank row above it, after the last turn's footer, and an expanded shell row keeps one above it in the tree styles too, so a Bash call no longer runs straight on from your prompt.
+
 ## [0.12.0] - 2026-10-07
 
 ### Fixed
